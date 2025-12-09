@@ -1,11 +1,13 @@
-## Interface:110205, 110207, 120000
+## Interface: 120000
 ## Title: GCD Bar
-## Author: NigelTve
+## Author: Flowlin
 ## Notes: Display a GCD as a bar
 ## Version: 0.0.1
 ## SavedVariables: GCDBarDB
 ## IconTexture: Interface\AddOns\GCDBar\Media\icon.tga
 
 embeds.xml
+Utils.lua
+Consts.lua
 Core.lua
 Options.lua

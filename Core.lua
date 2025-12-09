@@ -1,29 +1,31 @@
 local addonName, ns = ...
 
-local DEBUG = true
+local gcdbar = CreateFrame("Frame", nil, UIParent)
+gcdbar:SetFrameStrata(ns.STRATA.LOW)
+gcdbar:SetPoint("CENTER")
+gcdbar:SetSize(64, 64)
 
-local f = CreateFrame("Frame")
-f:RegisterEvent("PLAYER_LOGIN")
-f:RegisterEvent("PLAYER_ENTERING_WORLD")
-f:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-f:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-f:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+gcdbar:RegisterEvent(ns.EVENT_NAMES.PLAYER_LOGIN)
+gcdbar:RegisterEvent(ns.EVENT_NAMES.PLAYER_ENTERING_WORLD)
+gcdbar:RegisterEvent(ns.EVENT_NAMES.SPELL_CD_UPDATE)
+gcdbar:RegisterEvent(ns.EVENT_NAMES.ACTIONBAR_CD_UPDATE)
+gcdbar:RegisterEvent(ns.EVENT_NAMES.SPELLCAST_SENT)
+gcdbar:RegisterUnitEvent(ns.EVENT_NAMES.SPELLCAST_SUCCEEDED, ns.UNITS.PLAYER)
 
-local function DebugLog(msg)
-    if(not DEBUG) then
-        return
-    end
-    print(msg)
-end
+local tex = gcdbar:CreateTexture(nil, "ARTWORK")
+tex:SetAllPoints()
+tex:SetTexture(ns.TEXTURES.test)
 
 local function HandleEvent(self, event, unit, arg3, spellID)
-    if event == "PLAYER_LOGIN" then 
+    if event == ns.EVENT_NAMES.PLAYER_LOGIN then
+        ns.Log("Information")
+        ns.Log("Debug" , ns.LOG_TYPES.DEBUG)
+        ns.Log("Warning" , ns.LOG_TYPES.WARNING)
+        ns.Log("Error", ns.LOG_TYPES.ERROR)
     end
-    
+
     -- CursorRingDB     = CursorRingDB     or CopyTable(ns.defaults)
     -- CursorRingCharDB = CursorRingCharDB or CopyTable(ns.charDefaults)
 end
 
-f:SetScript("OnEvent", HandleEvent)
-
-
+gcdbar:SetScript("OnEvent", HandleEvent)
