@@ -37,9 +37,10 @@ ns.stratas = {
 }
 
 ns.textures = {
-    test = "Interface\\AddOns\\TestAddon\\media\\smile.png",
-	bantoBar = "Interface\\AddOns\\TestAddon\\media\\BantoBar.tga",
-	default = "Interface\\AddOns\\TestAddon\\media\\Flat.tga"
+    test = "Interface\\AddOns\\GCDBar\\Media\\smile.png",
+    default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
+	bantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
+    outline = "Interface\\AddOns\\GCDBar\\Media\\Outline.tga"
 }
 
 ns.spellIds = {
@@ -47,15 +48,19 @@ ns.spellIds = {
 }
 
 ns.defaults ={
-	barEnabled = true,
+    barEnabled = true,
 	posX = 0,
 	posY = 0,
 	width = 144,
 	height = 17,
 	barColor =  { r = 1, g = 1, b = 1 , a = 1},
 	bgColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
+    outlineColor = { r = 0, g = 0, b = 0, a = 1 },
 	defaultTexture = ns.textures.default,
+    defaultBG = ns.textures.default,
+    defaultOutline =  ns.textures.outline,
 	statusBarMin = 0,
 	statusBarmax = 1,
-	strata = ns.stratas.LOW
+	strata = ns.stratas.LOW,
+    boarderSize = 2
 }
