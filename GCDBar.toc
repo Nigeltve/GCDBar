@@ -3,7 +3,7 @@
 ## Author: Flowlin
 ## Notes: Display a GCD as a bar
 ## Version: 0.0.1
-## SavedVariables: GCDBarDB
+## SavedVariables: BarDB
 ## IconTexture: Interface\AddOns\GCDBar\Media\icon.tga
 
 embeds.xml

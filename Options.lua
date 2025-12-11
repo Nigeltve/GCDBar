@@ -65,4 +65,3 @@ local options = {
 
 AceConfig:RegisterOptionsTable("GCDBar", options)
 local panel = AceConfigDialog:AddToBlizOptions("GCDBar", "GCD Bar")
-
