@@ -9,5 +9,6 @@
 embeds.xml
 Utils.lua
 Consts.lua
+Commands.lua
 Core.lua
 Options.lua

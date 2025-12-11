@@ -52,3 +52,39 @@ local function Log(msg, logType)
 end
 
 ns.Log = Log
+
+local function AddMissingKeys(full, missing)
+    for k, v in pairs(full) do
+        if not (missing[""..k] ~= nil) then
+            ns.Log("Table is missing ".. k, ns.logTypes.DEBUG)
+            missing[""..k] = v
+        end
+    end
+
+    return missing
+end 
+
+local function RemoveExtraKeys(full, missing)
+    for k, v in pairs(full) do
+        if missing[""..k] == nil then
+            ns.Log("Removing extra key " .. k, ns.logTypes.DEBUG)
+            full[""..k] = nil
+        end
+    end
+    return missing
+end
+
+ns.AddMissingKeys = AddMissingKeys
+ns.RemoveExtraKeys = RemoveExtraKeys
+
+
+local function HandleDB(self, event, args1)
+	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
+        ns.Log("Settings up DB", ns.logTypes.DEBUG)
+		BarDB = BarDB or CopyTable(ns.defaults)
+        BarDB = ns.AddMissingKeys(ns.defaults, BarDB)
+        BarDB = ns.RemoveExtraKeys(BarDB, ns.defaults)
+	end
+end
+
+ns.HandleDB = HandleDB
