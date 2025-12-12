@@ -8,7 +8,6 @@ local bg = CreateFrame("StatusBar", nil, bar)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
-
 local function UpdateBarSettings(settings)
 	if not settings then
 		ns.Log("No Settings were passed in", ns.logTypes.WARNING)
@@ -26,6 +25,10 @@ local function UpdateBarSettings(settings)
     bar:SetStatusBarTexture(settings.defaultTexture)
     bar:SetStatusBarColor(settings.barColor.r, settings.barColor.g, settings.barColor.b, settings.barColor.a)
     bar:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
+
+	if(not settings.endFilled) then
+		bar:SetValue(0)
+	end
 
     bg:SetPoint("CENTER")
     bg:SetFrameStrata(settings.strata)
@@ -45,7 +48,8 @@ local function UpdateBarSettings(settings)
 
 	if not settings.barEnabled then
 		bar:Hide()
-		bg:Hide()
+	else
+		bar:Show()
 	end
 end
 
@@ -59,6 +63,8 @@ end
 local animating = false
 local animStart = 0
 local animDuration = 0
+local isReversed = false
+local endFilled = true;
 
 local function UpdateFill()
     if not animating then return end
@@ -66,12 +72,23 @@ local function UpdateFill()
     local elapsed = GetTime() - animStart
     local progress = elapsed / animDuration
 
-    if progress >= 1 then
+    if progress >= 1.05 then
         progress = 1
         animating = false
+
+		if endFilled then
+			bar:SetValue(1)
+		else
+			bar:SetValue(0)
+		end
+		return;
     end
 
-    bar:SetValue(progress)
+	if isReversed then
+		bar:SetValue(1 - progress)
+	else
+		bar:SetValue(progress)
+	end
 end
 
 local function HandleGcdAction(self, event, ...)
@@ -79,8 +96,8 @@ local function HandleGcdAction(self, event, ...)
 		local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
 		if(issecurevalue(duration)) then
-				ns.Log("Duration is secret" , ns.logTypes.WARNING)
-				return
+			ns.Log("Duration is secret" , ns.logTypes.WARNING)
+			return
 		end
 
 		if start and duration and duration > 0 then
@@ -97,6 +114,10 @@ local function HandleDB(self, event, args1)
         BarDB = BarDB or CopyTable(ns.defaults)
         BarDB = ns.AddMissingKeys(ns.defaults, BarDB)
         BarDB = ns.RemoveExtraKeys(BarDB, ns.defaults)
+
+		isReversed = BarDB.fillReverse
+		endFilled = BarDB.endFilled
+
 		UpdateBarSettings(BarDB)
 	end
 end
@@ -107,3 +128,5 @@ loginFrame:SetScript("OnEvent", HandleDB)
 
 bar:SetScript("OnEvent", HandleGcdAction)
 bar:SetScript("OnUpdate", UpdateFill)
+
+ns.UpdateBarSettings = UpdateBarSettings

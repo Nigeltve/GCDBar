@@ -47,20 +47,29 @@ ns.spellIds = {
 	GCD = 61304
 }
 
-ns.defaults ={
-    barEnabled = true,
+ns.defaults = {
+	barEnabled = true,
 	posX = 0,
 	posY = 0,
 	width = 144,
 	height = 17,
 	barColor =  { r = 1, g = 1, b = 1 , a = 1},
 	bgColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
-    outlineColor = { r = 0, g = 0, b = 0, a = 1 },
+	outlineColor = { r = 0, g = 0, b = 0, a = 1 },
 	defaultTexture = ns.textures.default,
-    defaultBG = ns.textures.default,
-    defaultOutline =  ns.textures.outline,
+	defaultBG = ns.textures.default,
+	defaultOutline =  ns.textures.outline,
 	statusBarMin = 0,
 	statusBarmax = 1,
 	strata = ns.stratas.LOW,
-    boarderSize = 2
+	boarderSize = 2,
+	fillReverse = false,
+	endFilled = true
+}
+
+ns.command = {
+	enable = "show",
+	disable = "hide",
+	toggle = "toggle",
+	help = "help"
 }
