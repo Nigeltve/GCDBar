@@ -5,6 +5,14 @@ local LOG_LEVEL_DEBUG = 2
 local LOG_LEVEL_WARNING = 1
 local LOG_LEVEL_ERROR = 0
 
+function ns:Say(msg)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00 GCDBar:|r " .. tostring(msg))
+end
+
+function ns:logClear(msg)
+    print(msg)
+end 
+
 local function LogInfo(msg)
     if ns.logLevel > LOG_LEVEL_INFO then
         return
@@ -33,7 +41,7 @@ local function LogError(msg)
     print("ERR: " .. msg)
 end
 
-local function Log(msg, logType)
+function ns:Log(msg, logType)
     if not ns.debug then
         return
     end
@@ -51,9 +59,7 @@ local function Log(msg, logType)
     end
 end
 
-ns.Log = Log
-
-local function AddMissingKeys(full, missing)
+function ns:AddMissingKeys(full, missing)
     for k, v in pairs(full) do
         if not (missing[""..k] ~= nil) then
             ns.Log("Table is missing ".. k, ns.logTypes.DEBUG)
@@ -64,7 +70,7 @@ local function AddMissingKeys(full, missing)
     return missing
 end 
 
-local function RemoveExtraKeys(full, missing)
+function ns:RemoveExtraKeys(full, missing)
     for k, v in pairs(full) do
         if missing[""..k] == nil then
             ns.Log("Removing extra key " .. k, ns.logTypes.DEBUG)
@@ -74,17 +80,21 @@ local function RemoveExtraKeys(full, missing)
     return missing
 end
 
-ns.AddMissingKeys = AddMissingKeys
-ns.RemoveExtraKeys = RemoveExtraKeys
+function ns:DisplayTable(tbl)
+    if type(tbl) ~= "table" then 
+        return
+    end
 
-
-local function HandleDB(self, event, args1)
-	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
-        ns.Log("Settings up DB", ns.logTypes.DEBUG)
-		BarDB = BarDB or CopyTable(ns.defaults)
-        BarDB = ns.AddMissingKeys(ns.defaults, BarDB)
-        BarDB = ns.RemoveExtraKeys(BarDB, ns.defaults)
-	end
+    ns:logClear("{")
+    for k, v in pairs(tbl) do
+        if type(v) ~= "table" then
+            ns:logClear(tostring(k) .. "=" .. tostring(v))
+        elseif k == nil or v == nil then
+            print("nil")
+        else
+            ns:logClear(tostring(k) .. "=")
+            ns:DisplayTable(v)
+        end
+    end
+    ns:logClear("}")
 end
-
-ns.HandleDB = HandleDB

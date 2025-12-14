@@ -1,12 +1,8 @@
-local addonName, ns = ...
+local _, ns = ...
 
 SLASH_GCDBAR1 = '/cdb'
 
-local function Say(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00GCDBar:|r " .. tostring(msg))
-end
-
-function SlashCmdList.GCDBAR(msg, editbox)
+function SlashCmdList.GCDBAR(msg, _)
 	local args = {}
 
 	for token in string.gmatch(msg or "", "%S+") do
@@ -14,34 +10,80 @@ function SlashCmdList.GCDBAR(msg, editbox)
 	end
 
 	local cmd = args[1]
-	local arg2 = args[2]
+	local arg1 = args[2]
 
-	if cmd == ns.command.enable then
-		BarDB.barEnabled = true
-		ns.UpdateBarSettings(BarDB)
+	if cmd == ns.command.printdb then
+		if(arg1 == nil) then
+			ns:Log("Printing out barDb", ns.logTypes.DEBUG)
+			ns:DisplayTable(ns.barDb)
+
+			return
+		elseif arg1 == "default" then
+			ns:Log("Printing out defaults", ns.logTypes.DEBUG)
+			ns:DisplayTable(ns.defaults)
+
+			return
+		end
 	end
 
-	if cmd == ns.command.disable then
-		BarDB.barEnabled = false
-		ns.UpdateBarSettings(BarDB)
+	if cmd == ns.command.debug then
+		if arg1 == nil or arg1 == ns.command.toggle then
+			ns.debug = not ns.debug
+			ns:Say("toggling Debug Mode: ".. tostring(ns.debug))
+			ns.logLevel = 3
+
+			return
+		end
+	end
+
+	if cmd == ns.command.loglevel then
+		if arg1 == nil then
+			ns:Say("log level is set to: " .. ns.logLevelConvert(ns.logLevel))
+			return
+		end
+
+		if not type(arg1) == "number" then
+			ns:Say("invalid arugment")
+			return
+		end
+
+		ns:Say("log level change arg1: " .. tostring(arg1))
+
+		return
+	end
+
+	if cmd == ns.command.show then
+		ns.barDb.barEnabled = true
+		ns:UpdateBarSettings(ns.barDb)
+
+		return
+	end
+
+	if cmd == ns.command.hide then
+		ns.barDb.barEnabled = false
+		ns:UpdateBarSettings(ns.barDb)
+
+		return
 	end
 
 	if cmd == ns.command.toggle then
-		BarDB.barEnabled = not BarDB.barEnabled
-		ns.UpdateBarSettings(BarDB)
+		ns.barDb.barEnabled = not ns.barDb.barEnabled
+		ns:UpdateBarSettings(ns.barDb)
+
+		return
 	end
 
 	if cmd == ns.command.reset then
-		BarDB = CopyTable(ns.defaults)
-		ns.UpdateBarSettings(BarDB)
+		ns.barDb = CopyTable(ns.defaults)
+		ns:UpdateBarSettings(ns.barDb)
+
+		return
 	end
 
 	if cmd == ns.command.help then
-		Say("Commands")
-		Say("/cdb show/hide/toggle - Change bar display mode")
-		Say("/cdb reset – resets settings to default (character only)")
-		Say("/cdb help – Display Help Commands")
-		
-
+		ns:Say("Commands")
+		ns:Say("/cdb show/hide/toggle - Change bar display mode")
+		ns:Say("/cdb help – Display Help Commands")
+		return
 	end
 end

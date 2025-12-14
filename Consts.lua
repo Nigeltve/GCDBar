@@ -1,4 +1,4 @@
-local addonName, ns = ...
+local _, ns = ...
 
 ns.debug = true
 ns.logLevel = 0
@@ -10,9 +10,32 @@ ns.logTypes = {
     ERROR = "ERROR"
 }
 
+function ns:logLevelConvert(level)
+	if not type(level) == "number" then
+		return
+	end 
+
+	if level == 0 then return ns.logTypes.ERROR end
+	if level == 1 then return ns.logTypes.WARNING end
+	if level == 2 then return ns.logTypes.DEBUG end
+	if level == 3 then return ns.logTypes.INFO end
+end
+
+function ns:logTypeConvert(level)
+	if not type(level) == "string" then
+		return
+	end
+
+	if level == ns.logTypes.ERROR then return 0  end
+	if level == ns.logTypes.WARNING then return 1 end
+	if level == ns.logTypes.DEBUG then return 2 end
+	if level == ns.logTypes.INFO then return 3 end
+end
+
 ns.eventNames = {
 	ADDON_LOADED = "ADDON_LOADED",
     PLAYER_LOGIN = "PLAYER_LOGIN",
+	PLAYER_LOGOUT = "PLAYER_LOGOUT",
     PLAYER_ENTERING_WORLD = "PLAYER_ENTERING_WORLD",
     SPELL_CD_UPDATE = "SPELL_UPDATE_COOLDOWN",
     ACTIONBAR_CD_UPDATE = "ACTIONBAR_UPDATE_COOLDOWN",
@@ -68,8 +91,12 @@ ns.defaults = {
 }
 
 ns.command = {
-	enable = "show",
-	disable = "hide",
+	debug = "debug",
+	loglevel = "loglevel",
+	printdb = "printdb",
+	show = "show",
+	hide = "hide",
 	toggle = "toggle",
+	reset = "reset",
 	help = "help"
 }

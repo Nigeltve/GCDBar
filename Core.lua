@@ -1,16 +1,20 @@
-local addonName, ns = ...
+local _, ns = ...
+
+local animating = false
+local animStart = 0
+local animDuration = 0
 
 local bar = CreateFrame("StatusBar", nil, UIParent)
 local outline = CreateFrame("StatusBar", nil, bar)
 local bg = CreateFrame("StatusBar", nil, bar)
 
-
+bar:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
-local function UpdateBarSettings(settings)
+function ns:UpdateBarSettings(settings)
 	if not settings then
-		ns.Log("No Settings were passed in", ns.logTypes.WARNING)
+		ns.Log("No Settings were passed in", ns.logTypes.ERROR)
 		return;
 	end
 
@@ -60,13 +64,10 @@ local function ReadSpellCooldown(spellID)
     end
 end
 
-local animating = false
-local animStart = 0
-local animDuration = 0
-local isReversed = false
-local endFilled = true;
-
 local function UpdateFill()
+    if ns.barDb == nil then
+        return
+    end
     if not animating then return end
 
     local elapsed = GetTime() - animStart
@@ -76,7 +77,7 @@ local function UpdateFill()
         progress = 1
         animating = false
 
-		if endFilled then
+		if ns.barDb.endFilled then
 			bar:SetValue(1)
 		else
 			bar:SetValue(0)
@@ -84,7 +85,7 @@ local function UpdateFill()
 		return;
     end
 
-	if isReversed then
+	if ns.barDb.fillReverse then
 		bar:SetValue(1 - progress)
 	else
 		bar:SetValue(progress)
@@ -92,11 +93,23 @@ local function UpdateFill()
 end
 
 local function HandleGcdAction(self, event, ...)
-    if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
+    if event == ns.eventNames.PLAYER_LOGIN then
+        if ns.barDb == nil then
+            ns:Log("BarDb is empty" ,ns.logTypes.WARNING)
+            return;
+        end
+
+        ns:UpdateBarSettings(ns.barDb)
+    elseif event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
+        if ns.barDb == nil then
+            ns:Log( "Data Base is null",ns.logTypes.WARNING)
+            return
+        end
+
 		local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
 		if(issecurevalue(duration)) then
-			ns.Log("Duration is secret" , ns.logTypes.WARNING)
+			ns:Log("Duration is secret" , ns.logTypes.WARNING)
 			return
 		end
 
@@ -108,25 +121,5 @@ local function HandleGcdAction(self, event, ...)
     end
 end
 
-local function HandleDB(self, event, args1)
-	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
-        ns.Log("Settings up DB", ns.logTypes.DEBUG)
-        BarDB = BarDB or CopyTable(ns.defaults)
-        BarDB = ns.AddMissingKeys(ns.defaults, BarDB)
-        BarDB = ns.RemoveExtraKeys(BarDB, ns.defaults)
-
-		isReversed = BarDB.fillReverse
-		endFilled = BarDB.endFilled
-
-		UpdateBarSettings(BarDB)
-	end
-end
-
-local loginFrame = CreateFrame("Frame", nil, UIParent)
-loginFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
-loginFrame:SetScript("OnEvent", HandleDB)
-
 bar:SetScript("OnEvent", HandleGcdAction)
 bar:SetScript("OnUpdate", UpdateFill)
-
-ns.UpdateBarSettings = UpdateBarSettings
