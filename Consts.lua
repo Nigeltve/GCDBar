@@ -73,6 +73,7 @@ ns.spellIds = {
 	GCD = 61304
 }
 
+---@class defaults
 ns.defaults = {
 	barEnabled = true,
 	posX = 0,

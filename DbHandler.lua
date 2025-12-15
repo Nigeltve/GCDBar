@@ -1,6 +1,7 @@
 ---@class ns
 local ns = select(2, ...)
 
+---@class defaults
 ns.barDb = nil
 
 ---@param event string
