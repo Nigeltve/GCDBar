@@ -48,6 +48,8 @@ local function SetDropDown(info, val)
         ns.barDb.forgroundTexture = val
     elseif argType == "backgroundTexture" then
         ns.barDb.backgroundTexture = val
+    elseif argType == "strata" then
+        ns.barDb.strata = val
     end
 
     ns:UpdateBarSettings()
@@ -59,6 +61,8 @@ local function GetDropDown(info)
         return ns.barDb.forgroundTexture
     elseif argType == "backgroundTexture" then
         return ns.barDb.backgroundTexture
+    elseif argType == "strata" then
+        return ns.barDb.strata
     end
 end
 
@@ -92,6 +96,7 @@ end
 local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
+
     if argType ==  "forgroundColor" then
         ns.barDb.forgroundColor = newColor
     elseif argType == "backgroundColor" then
@@ -105,7 +110,7 @@ end
 
 local function GetColor(info)
     local argType = info[#info]
-    local color = { r = 1, g = 1, b = 1 , a = 1} -- default color
+    local color = { r = 1, g = 1, b = 1 , a = 1}
 
     if argType ==  "forgroundColor" then
         color = ns.barDb.forgroundColor
@@ -237,7 +242,6 @@ local options = {
                     width  = "full",
                     style = "dropdown"
                 },
-                
                 backgroundTexture = {
                     type   = "select",
                     name   = "Background Texture",
@@ -316,7 +320,17 @@ local options = {
                     step = 1,
                     order = 21,
                     width = "full"
-                }
+                },
+                strata = {
+                    type   = "select",
+                    name   = "Bar Strata",
+                    set = SetDropDown,
+                    get = GetDropDown,
+                    values = ns.stratas,
+                    order  = 22,
+                    width  = "full",
+                    style = "dropdown"
+                },
             }
         }
     }

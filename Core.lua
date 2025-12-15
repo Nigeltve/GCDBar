@@ -38,12 +38,13 @@ function ns:UpdateBarSettings()
             edgeSize = ns.barDb.boarderSize,
         })
         border:SetBackdropBorderColor(settings.boarderColor.r, settings.boarderColor.g, settings.boarderColor.b, settings.boarderColor.a)
+        border:SetFrameStrata(ns.stratas[ns.barDb.strata])
         border:Show()
     end
 
     bar:SetPoint("CENTER", settings.offsetX, settings.offsetY)
     bar:SetSize(settings.barWidth, settings.barHeight)
-    bar:SetFrameStrata(settings.strata)
+    bar:SetFrameStrata(ns.stratas[ns.barDb.strata])
     bar:SetFrameLevel(frameLevel)
     bar:SetStatusBarTexture(ns.barTextures[settings.forgroundTexture])
     bar:SetStatusBarColor(settings.forgroundColor.r, settings.forgroundColor.g, settings.forgroundColor.b, settings.forgroundColor.a)
@@ -55,7 +56,7 @@ function ns:UpdateBarSettings()
 
     bg:SetPoint("CENTER")
     bg:SetSize(settings.barWidth, settings.barHeight)
-    bg:SetFrameStrata(settings.strata)
+    bg:SetFrameStrata(ns.stratas[ns.barDb.strata])
     bg:SetFrameLevel(bar:GetFrameLevel() - 1)
     bg:SetStatusBarTexture(ns.barTextures[settings.backgroundTexture])
     bg:SetStatusBarColor(settings.backgroundColor.r, settings.backgroundColor.g, settings.backgroundColor.b, settings.backgroundColor.a)
@@ -70,9 +71,10 @@ local function ReadSpellCooldown(spellID)
 end
 
 local function UpdateFill()
-    if ns.barDb == nil then
+    if ns.barDb == nil or not ns.barDb.barEnabled then
         return
     end
+
     if not animating then return end
 
     local elapsed = GetTime() - animStart
