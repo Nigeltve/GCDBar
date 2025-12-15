@@ -49,7 +49,7 @@ local function LogError(msg)
 end
 
 ---@param msg string
----@param logType string
+---@param logType string | nil
 function ns:Log(msg, logType)
     if not ns.debug then
         return

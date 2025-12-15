@@ -55,28 +55,28 @@ function SlashCmdList.GCDBAR(msg, _)
 
 	if cmd == ns.command.show then
 		ns.barDb.barEnabled = true
-		ns:UpdateBarSettings(ns.barDb)
+		ns:UpdateBarSettings()
 
 		return
 	end
 
 	if cmd == ns.command.hide then
 		ns.barDb.barEnabled = false
-		ns:UpdateBarSettings(ns.barDb)
+		ns:UpdateBarSettings()
 
 		return
 	end
 
 	if cmd == ns.command.toggle then
 		ns.barDb.barEnabled = not ns.barDb.barEnabled
-		ns:UpdateBarSettings(ns.barDb)
+		ns:UpdateBarSettings()
 
 		return
 	end
 
 	if cmd == ns.command.reset then
 		ns.barDb = CopyTable(ns.defaults)
-		ns:UpdateBarSettings(ns.barDb)
+		ns:UpdateBarSettings()
 
 		return
 	end

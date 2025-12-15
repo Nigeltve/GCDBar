@@ -61,12 +61,17 @@ ns.stratas = {
 }
 
 ns.barTextures = {
-    default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
-	bantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
+    Default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
+	BantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
+}
+
+ns.barTextureChoices = {
+    Default = "Default",
+    BantoBar = "BantoBar",
 }
 
 ns.outlinetextures = {
-	outline = "Interface\\AddOns\\GCDBar\\Media\\Outline.tga"
+	default = "Interface\\Buttons\\WHITE8X8"
 }
 
 ns.spellIds = {
@@ -76,20 +81,20 @@ ns.spellIds = {
 ---@class defaults
 ns.defaults = {
 	barEnabled = true,
-	posX = 0,
-	posY = 0,
-	width = 144,
-	height = 17,
-	barColor =  { r = 1, g = 1, b = 1 , a = 1},
-	bgColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
-	outlineColor = { r = 0, g = 0, b = 0, a = 1 },
-	defaultTexture = ns.barTextures.default,
-	defaultBG = ns.barTextures.default,
-	defaultOutline =  ns.outlinetextures.outline,
+	offsetX = 0,
+	offsetY = 0,
+	barWidth = 144,
+	barHeight = 17,
+	boarderSize = 2,
+	boarderEnabled = true,
+	forgroundColor =  { r = 1, g = 1, b = 1 , a = 1},
+	backgroundColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
+	boarderColor = { r = 0, g = 0, b = 0, a = 1 },
+	forgroundTexture = ns.barTextureChoices.Default,
+	backgroundTexture = ns.barTextureChoices.Default,
 	statusBarMin = 0,
 	statusBarmax = 1,
 	strata = ns.stratas.LOW,
-	boarderSize = 2,
 	fillReverse = false,
 	endFilled = true
 }

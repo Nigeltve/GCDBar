@@ -6,57 +6,60 @@ local animStart = 0
 local animDuration = 0
 
 local bar = CreateFrame("StatusBar", nil, UIParent)
-local outline = CreateFrame("StatusBar", nil, bar)
+local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
 local bg = CreateFrame("StatusBar", nil, bar)
 
-bar:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
----@param settings table
-function ns:UpdateBarSettings(settings)
-	if not settings then
+
+function ns:UpdateBarSettings()
+	if not ns.barDb then
 		ns:Log("No Settings are being passed in", ns.logTypes.ERROR)
 		return;
 	end
 
-    local outlinePad = 3 * settings.boarderSize
-    local fillPad = outlinePad - 2
+    local settings = ns.barDb
     local frameLevel = 10
 
+	if not settings.barEnabled then
+		bar:Hide()
+        return
+	else
+		bar:Show()
+	end
+
+    if not settings.boarderEnabled or settings.boarderSize <= 0 then
+        border:Hide()
+    else
+        border:SetAllPoints(bar)
+        border:SetBackdrop({
+            edgeFile = ns.outlinetextures.default,
+            edgeSize = ns.barDb.boarderSize,
+        })
+        border:SetBackdropBorderColor(settings.boarderColor.r, settings.boarderColor.g, settings.boarderColor.b, settings.boarderColor.a)
+        border:Show()
+    end
+
+    bar:SetPoint("CENTER", settings.offsetX, settings.offsetY)
+    bar:SetSize(settings.barWidth, settings.barHeight)
     bar:SetFrameStrata(settings.strata)
     bar:SetFrameLevel(frameLevel)
-    bar:SetPoint("CENTER", settings.posX, settings.posY)
-    bar:SetSize(settings.width + fillPad, settings.height + fillPad)
-    bar:SetStatusBarTexture(settings.defaultTexture)
-    bar:SetStatusBarColor(settings.barColor.r, settings.barColor.g, settings.barColor.b, settings.barColor.a)
+    bar:SetStatusBarTexture(ns.barTextures[settings.forgroundTexture])
+    bar:SetStatusBarColor(settings.forgroundColor.r, settings.forgroundColor.g, settings.forgroundColor.b, settings.forgroundColor.a)
     bar:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
 
-	if(not settings.endFilled) then
+    if(not settings.endFilled) then
 		bar:SetValue(0)
 	end
 
     bg:SetPoint("CENTER")
+    bg:SetSize(settings.barWidth, settings.barHeight)
     bg:SetFrameStrata(settings.strata)
     bg:SetFrameLevel(bar:GetFrameLevel() - 1)
-    bg:SetSize(settings.width + fillPad, settings.height + fillPad)
-    bg:SetStatusBarTexture(settings.defaultBG)
-    bg:SetStatusBarColor(settings.bgColor.r, settings.bgColor.g, settings.bgColor.b, settings.bgColor.a)
+    bg:SetStatusBarTexture(ns.barTextures[settings.backgroundTexture])
+    bg:SetStatusBarColor(settings.backgroundColor.r, settings.backgroundColor.g, settings.backgroundColor.b, settings.backgroundColor.a)
     bg:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
-
-    outline:SetPoint("CENTER")
-    outline:SetFrameStrata(settings.strata)
-    outline:SetFrameLevel(bar:GetFrameLevel() + 1)
-    outline:SetSize(settings.width + outlinePad, settings.height + outlinePad)
-    outline:SetStatusBarTexture(settings.defaultOutline)
-    outline:SetStatusBarColor(settings.outlineColor.r, settings.outlineColor.g, settings.outlineColor.b, settings.outlineColor.a)
-    outline:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
-
-	if not settings.barEnabled then
-		bar:Hide()
-	else
-		bar:Show()
-	end
 end
 
 local function ReadSpellCooldown(spellID)
@@ -97,7 +100,7 @@ end
 local function HandleGcdAction(self, event, ...)
     if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
         if ns.barDb == nil then
-            ns:Log( "Data Base is null",ns.logTypes.WARNING)
+            ns:Log("Data Base is null",ns.logTypes.WARNING)
             return
         end
 

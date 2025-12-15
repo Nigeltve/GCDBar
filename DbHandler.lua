@@ -1,7 +1,7 @@
 ---@class ns
 local ns = select(2, ...)
 
----@class defaults
+---@class db : defaults
 ns.barDb = nil
 
 ---@param event string
@@ -13,7 +13,7 @@ local function HandleDB(self, event, args1)
         end
 
         ns.barDb = BarDB
-        ns:UpdateBarSettings(ns.barDb)
+        ns:UpdateBarSettings()
     end
 end
 
