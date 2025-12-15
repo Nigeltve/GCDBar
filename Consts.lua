@@ -1,4 +1,5 @@
-local _, ns = ...
+---@class ns
+local ns = select(2, ...)
 
 ns.debug = true
 ns.logLevel = 0
@@ -59,11 +60,13 @@ ns.stratas = {
     TOOLTIP = "TOOLTIP"
 }
 
-ns.textures = {
-    test = "Interface\\AddOns\\GCDBar\\Media\\smile.png",
+ns.barTextures = {
     default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
 	bantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
-    outline = "Interface\\AddOns\\GCDBar\\Media\\Outline.tga"
+}
+
+ns.outlinetextures = {
+	outline = "Interface\\AddOns\\GCDBar\\Media\\Outline.tga"
 }
 
 ns.spellIds = {
@@ -79,9 +82,9 @@ ns.defaults = {
 	barColor =  { r = 1, g = 1, b = 1 , a = 1},
 	bgColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
 	outlineColor = { r = 0, g = 0, b = 0, a = 1 },
-	defaultTexture = ns.textures.default,
-	defaultBG = ns.textures.default,
-	defaultOutline =  ns.textures.outline,
+	defaultTexture = ns.barTextures.default,
+	defaultBG = ns.barTextures.default,
+	defaultOutline =  ns.outlinetextures.outline,
 	statusBarMin = 0,
 	statusBarmax = 1,
 	strata = ns.stratas.LOW,

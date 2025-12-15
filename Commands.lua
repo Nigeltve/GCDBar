@@ -1,4 +1,5 @@
-local _, ns = ...
+---@class ns
+local ns = select(2, ...)
 
 SLASH_GCDBAR1 = '/cdb'
 
@@ -15,12 +16,12 @@ function SlashCmdList.GCDBAR(msg, _)
 	if cmd == ns.command.printdb then
 		if(arg1 == nil) then
 			ns:Log("Printing out barDb", ns.logTypes.DEBUG)
-			ns:DisplayTable(ns.barDb)
+			ns:PrintTable(ns.barDb)
 
 			return
 		elseif arg1 == "default" then
 			ns:Log("Printing out defaults", ns.logTypes.DEBUG)
-			ns:DisplayTable(ns.defaults)
+			ns:PrintTable(ns.defaults)
 
 			return
 		end
@@ -38,7 +39,7 @@ function SlashCmdList.GCDBAR(msg, _)
 
 	if cmd == ns.command.loglevel then
 		if arg1 == nil then
-			ns:Say("log level is set to: " .. ns.logLevelConvert(ns.logLevel))
+			ns:Say("log level is set to: " .. ns:logLevelConvert(ns.logLevel))
 			return
 		end
 

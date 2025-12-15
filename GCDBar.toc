@@ -10,8 +10,6 @@ embeds.xml
 Consts.lua
 Utils.lua
 DbHandler.lua
-
 Commands.lua
 Core.lua
-
 Options.lua

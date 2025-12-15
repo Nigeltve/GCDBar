@@ -1,18 +1,22 @@
-local addonName, ns = ...
+---@class ns
+local ns = select(2, ...)
 
 local LOG_LEVEL_INFO = 3
 local LOG_LEVEL_DEBUG = 2
 local LOG_LEVEL_WARNING = 1
 local LOG_LEVEL_ERROR = 0
 
+---@param msg string
 function ns:Say(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00 GCDBar:|r " .. tostring(msg))
 end
 
+---@param msg string
 function ns:logClear(msg)
     print(msg)
 end 
 
+---@param msg string
 local function LogInfo(msg)
     if ns.logLevel > LOG_LEVEL_INFO then
         return
@@ -20,6 +24,7 @@ local function LogInfo(msg)
     print("INFO: " .. msg)
 end
 
+---@param msg string
 local function LogDebug(msg)
     if ns.logLevel > LOG_LEVEL_DEBUG then
         return
@@ -27,6 +32,7 @@ local function LogDebug(msg)
     print("DEBUG: " .. msg)
 end
 
+---@param msg string
 local function LogWarning(msg)
     if ns.logLevel > LOG_LEVEL_WARNING then
         return
@@ -34,6 +40,7 @@ local function LogWarning(msg)
     print("WARN: " .. msg)
 end
 
+---@param msg string
 local function LogError(msg)
     if ns.logLevel > LOG_LEVEL_ERROR then
         return
@@ -41,6 +48,8 @@ local function LogError(msg)
     print("ERR: " .. msg)
 end
 
+---@param msg string
+---@param logType string
 function ns:Log(msg, logType)
     if not ns.debug then
         return
@@ -59,42 +68,41 @@ function ns:Log(msg, logType)
     end
 end
 
-function ns:AddMissingKeys(full, missing)
-    for k, v in pairs(full) do
-        if not (missing[""..k] ~= nil) then
-            ns.Log("Table is missing ".. k, ns.logTypes.DEBUG)
-            missing[""..k] = v
-        end
-    end
-
-    return missing
-end 
-
-function ns:RemoveExtraKeys(full, missing)
-    for k, v in pairs(full) do
-        if missing[""..k] == nil then
-            ns.Log("Removing extra key " .. k, ns.logTypes.DEBUG)
-            full[""..k] = nil
-        end
-    end
-    return missing
-end
-
-function ns:DisplayTable(tbl)
-    if type(tbl) ~= "table" then 
+---@param tbl table
+---@param indent number | nil
+---@param seen table | nil
+-- Function to print nested tables in WoW
+function ns:PrintTable(tbl, indent, seen)
+    indent = indent or 0
+    seen = seen or {}
+    
+    -- Prevent infinite recursion for circular references
+    if seen[tbl] then
+        print(string.rep("  ", indent) .. "(circular reference)")
         return
     end
-
-    ns:logClear("{")
+    seen[tbl] = true
+    
+    -- Handle non-table types
+    if type(tbl) ~= "table" then
+        print(string.rep("  ", indent) .. tostring(tbl))
+        return
+    end
+    
+    -- Print table contents
     for k, v in pairs(tbl) do
-        if type(v) ~= "table" then
-            ns:logClear(tostring(k) .. "=" .. tostring(v))
-        elseif k == nil or v == nil then
-            print("nil")
+        local formatting = string.rep("  ", indent) .. tostring(k) .. ": "
+        
+        if type(v) == "table" then
+            print(formatting .. "{")
+            ns:PrintTable(v, indent + 1, seen)
+            print(string.rep("  ", indent) .. "}")
+        elseif type(v) == "function" then
+            print(formatting .. "<function>")
+        elseif type(v) == "string" then
+            print(formatting .. '"' .. v .. '"')
         else
-            ns:logClear(tostring(k) .. "=")
-            ns:DisplayTable(v)
+            print(formatting .. tostring(v))
         end
     end
-    ns:logClear("}")
 end

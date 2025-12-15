@@ -1,7 +1,10 @@
-local _, ns = ...
+---@class ns
+local ns = select(2, ...)
 
 ns.barDb = nil
 
+---@param event string
+---@param args1 string
 local function HandleDB(self, event, args1)
 	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
         if BarDB == nil or next(BarDB) == nil then
@@ -9,6 +12,7 @@ local function HandleDB(self, event, args1)
         end
 
         ns.barDb = BarDB
+        ns:UpdateBarSettings(ns.barDb)
     end
 end
 

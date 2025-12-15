@@ -1,4 +1,5 @@
-local _, ns = ...
+---@class ns
+local ns = select(2, ...)
 
 local animating = false
 local animStart = 0
@@ -12,9 +13,10 @@ bar:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
+---@param settings table
 function ns:UpdateBarSettings(settings)
 	if not settings then
-		ns.Log("No Settings were passed in", ns.logTypes.ERROR)
+		ns:Log("No Settings are being passed in", ns.logTypes.ERROR)
 		return;
 	end
 
@@ -25,7 +27,7 @@ function ns:UpdateBarSettings(settings)
     bar:SetFrameStrata(settings.strata)
     bar:SetFrameLevel(frameLevel)
     bar:SetPoint("CENTER", settings.posX, settings.posY)
-    bar:SetSize(settings.width, settings.height)
+    bar:SetSize(settings.width + fillPad, settings.height + fillPad)
     bar:SetStatusBarTexture(settings.defaultTexture)
     bar:SetStatusBarColor(settings.barColor.r, settings.barColor.g, settings.barColor.b, settings.barColor.a)
     bar:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
@@ -93,14 +95,7 @@ local function UpdateFill()
 end
 
 local function HandleGcdAction(self, event, ...)
-    if event == ns.eventNames.PLAYER_LOGIN then
-        if ns.barDb == nil then
-            ns:Log("BarDb is empty" ,ns.logTypes.WARNING)
-            return;
-        end
-
-        ns:UpdateBarSettings(ns.barDb)
-    elseif event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
+    if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
         if ns.barDb == nil then
             ns:Log( "Data Base is null",ns.logTypes.WARNING)
             return
