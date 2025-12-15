@@ -107,5 +107,6 @@ ns.command = {
 	hide = "hide",
 	toggle = "toggle",
 	reset = "reset",
-	help = "help"
+	help = "help",
+	options = "options",
 }

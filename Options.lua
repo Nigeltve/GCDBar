@@ -92,7 +92,6 @@ local function GetToggle(info)
 end
 
 -- Color --
-
 local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
@@ -124,7 +123,6 @@ local function GetColor(info)
 end
 
 -- Ranges 
-
 local function SetRange(info, val)
     local argType = info[#info]
 
@@ -159,6 +157,14 @@ local function GetRange(info)
     end
 
     return minBarDim
+end
+
+local function IsboarderDisabled(info)
+    local argType = info[#info]
+    if argType == "boarderSize" or argType == "boarderColor" then
+        return not ns.barDb.boarderEnabled
+    end
+    return false
 end
 
 
@@ -270,35 +276,6 @@ local options = {
                     order  = 16,
                     width  = 0.8,
                 },
-                boarderColor = {
-                    type   = "color",
-                    name   = "Outline Color",
-                    hasAlpha = true,
-                    set = SetColor,
-                    get = GetColor,
-                    order  = 17,
-                    width  = 0.8,
-                },
-                boarderEnabled = {
-                    type  = "toggle",
-                    name  = "Enable Boarder",
-                    desc  = "Set Boarder Visibility",
-                    set   = SetToggle,
-                    get   = GetToggle,
-                    order = 18,
-                    width = 0.8,
-                },
-                boarderSize = {
-                    type = "range",
-                    name = "Boarder Size",
-                    set = SetRange,
-                    get = GetRange,
-                    min = 0,
-                    max = 20,
-                    step = 1,
-                    order = 19,
-                    width = "full"
-                },
                 barWidth = {
                     type = "range",
                     name = "Bar Width",
@@ -307,7 +284,7 @@ local options = {
                     min = minBarDim,
                     max = maxBardim,
                     step = 1,
-                    order = 20,
+                    order = 17,
                     width = "full"
                 },
                 barHeight = {
@@ -318,8 +295,39 @@ local options = {
                     min = minBarDim,
                     max = maxBardim,
                     step = 1,
-                    order = 21,
+                    order = 18,
                     width = "full"
+                },
+                boarderEnabled = {
+                    type  = "toggle",
+                    name  = "Enable Boarder",
+                    desc  = "Set Boarder Visibility",
+                    set   = SetToggle,
+                    get   = GetToggle,
+                    order = 19,
+                    width = 1,
+                },
+                boarderColor = {
+                    type   = "color",
+                    name   = "Outline Color",
+                    hasAlpha = true,
+                    set = SetColor,
+                    get = GetColor,
+                    disabled = IsboarderDisabled,
+                    order  = 20,
+                    width  = 1,
+                },
+                boarderSize = {
+                    type = "range",
+                    name = "Boarder Size",
+                    set = SetRange,
+                    get = GetRange,
+                    min = 0,
+                    max = 20,
+                    step = 1,
+                    disabled = IsboarderDisabled,
+                    order = 21,
+                    width = 1
                 },
                 strata = {
                     type   = "select",
@@ -332,7 +340,27 @@ local options = {
                     style = "dropdown"
                 },
             }
-        }
+        },
+
+        help = {
+            type   = "group",
+            name   = "Help",
+            inline = true,
+            order  = 40,
+            args   = {
+                helpText = {
+                    type  = "description",
+                    name  = [[
+Slash commands:
+/cdb show       - Show GCD Bar
+/cdb hide       - Hide GCD Bar
+/cdb toggle     - Toggle visibility
+/cdb reset      - Reset to defaults
+/cdb options    - brings up options]],
+                    order = 10,
+                },
+            },
+        },
     }
 }
 
