@@ -1,17 +1,18 @@
 ---@class ns
 local ns = select(2, ...)
 
-local animating = false
-local animStart = 0
-local animDuration = 0
+local animTicker = nil
+local animStart = nil
+local animDuration = nil
 
-local bar = CreateFrame("StatusBar", nil, UIParent)
+
+local bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
+
 local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
 local bg = CreateFrame("StatusBar", nil, bar)
 
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
-
 
 function ns:UpdateBarSettings()
 	if not ns.barDb then
@@ -70,20 +71,35 @@ local function ReadSpellCooldown(spellID)
     end
 end
 
+local function StopAnimation()
+    if not animTicker then
+        return
+    end
+
+    animTicker:Cancel()
+    animTicker = nil
+    animStart = nil
+    animDuration = nil
+    
+end
+
 local function UpdateFill()
     if ns.barDb == nil or not ns.barDb.barEnabled then
         return
     end
 
-    if not animating then return end
+    if not animStart or not animDuration or animDuration <= 0 then
+        StopAnimation()
+        return
+    end
 
     local elapsed = GetTime() - animStart
     local progress = elapsed / animDuration
 
-    if progress >= 1.05 then
+    if progress >= 1
+     then
         progress = 1
-        animating = false
-
+        StopAnimation()
 		if ns.barDb.endFilled then
 			bar:SetValue(1)
 		else
@@ -108,18 +124,20 @@ local function HandleGcdAction(self, event, ...)
 
 		local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
-		if(issecurevalue(duration)) then
+		if not canaccessvalue(duration) then
+            StopAnimation()
 			ns:Log("Duration is secret" , ns.logTypes.WARNING)
 			return
 		end
 
-		if start and duration and duration > 0 then
+		if start and duration then
+            StopAnimation()
+
             animStart = start
             animDuration = duration
-            animating = true
+            animTicker = C_Timer.NewTicker(0.016, UpdateFill)
 		end
     end
 end
 
 bar:SetScript("OnEvent", HandleGcdAction)
-bar:SetScript("OnUpdate", UpdateFill)
