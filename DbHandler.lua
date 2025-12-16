@@ -1,5 +1,6 @@
 ---@class ns
 local ns = select(2, ...)
+ns.toc  = tostring(select(4, GetBuildInfo()))
 
 ---@class db : defaults
 ns.barDb = nil

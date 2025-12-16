@@ -124,7 +124,7 @@ local function HandleGcdAction(self, event, ...)
 
 		local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
-		if not canaccessvalue(duration) then
+		if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
             StopAnimation()
 			ns:Log("Duration is secret" , ns.logTypes.WARNING)
 			return
