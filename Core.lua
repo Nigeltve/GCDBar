@@ -15,53 +15,53 @@ bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
 function ns:UpdateBarSettings()
-	if not ns.barDb then
-		ns:Log("No Settings are being passed in", ns.logTypes.ERROR)
+	if not ns.currentProfile then
+		ns:Log("No Prfile to be found", ns.logTypes.ERROR)
 		return;
 	end
 
-    local settings = ns.barDb
+    local profileSettings = ns.currentProfile.settings
     local frameLevel = 10
 
-	if not settings.barEnabled then
+	if not profileSettings.barEnabled then
 		bar:Hide()
         return
 	else
 		bar:Show()
 	end
 
-    if not settings.boarderEnabled or settings.boarderSize <= 0 then
+    if not profileSettings.boarderEnabled or profileSettings.boarderSize <= 0 then
         border:Hide()
     else
         border:SetAllPoints(bar)
         border:SetBackdrop({
             edgeFile = ns.outlinetextures.default,
-            edgeSize = ns.barDb.boarderSize,
+            edgeSize = profileSettings.boarderSize,
         })
-        border:SetBackdropBorderColor(settings.boarderColor.r, settings.boarderColor.g, settings.boarderColor.b, settings.boarderColor.a)
-        border:SetFrameStrata(ns.stratas[ns.barDb.strata])
+        border:SetBackdropBorderColor(profileSettings.boarderColor.r, profileSettings.boarderColor.g, profileSettings.boarderColor.b, profileSettings.boarderColor.a)
+        border:SetFrameStrata(ns.stratas[profileSettings.strata])
         border:Show()
     end
 
-    bar:SetPoint("CENTER", settings.offsetX, settings.offsetY)
-    bar:SetSize(settings.barWidth, settings.barHeight)
-    bar:SetFrameStrata(ns.stratas[ns.barDb.strata])
+    bar:SetPoint("CENTER", profileSettings.offsetX, profileSettings.offsetY)
+    bar:SetSize(profileSettings.barWidth, profileSettings.barHeight)
+    bar:SetFrameStrata(ns.stratas[profileSettings.strata])
     bar:SetFrameLevel(frameLevel)
-    bar:SetStatusBarTexture(ns.barTextures[settings.forgroundTexture])
-    bar:SetStatusBarColor(settings.forgroundColor.r, settings.forgroundColor.g, settings.forgroundColor.b, settings.forgroundColor.a)
-    bar:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
+    bar:SetStatusBarTexture(ns.barTextures[profileSettings.forgroundTexture])
+    bar:SetStatusBarColor(profileSettings.forgroundColor.r, profileSettings.forgroundColor.g, profileSettings.forgroundColor.b, profileSettings.forgroundColor.a)
+    bar:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
 
-    if(not settings.endFilled) then
+    if(not profileSettings.endFilled) then
 		bar:SetValue(0)
 	end
 
     bg:SetPoint("CENTER")
-    bg:SetSize(settings.barWidth, settings.barHeight)
-    bg:SetFrameStrata(ns.stratas[ns.barDb.strata])
+    bg:SetSize(profileSettings.barWidth, profileSettings.barHeight)
+    bg:SetFrameStrata(ns.stratas[profileSettings.strata])
     bg:SetFrameLevel(bar:GetFrameLevel() - 1)
-    bg:SetStatusBarTexture(ns.barTextures[settings.backgroundTexture])
-    bg:SetStatusBarColor(settings.backgroundColor.r, settings.backgroundColor.g, settings.backgroundColor.b, settings.backgroundColor.a)
-    bg:SetMinMaxValues(settings.statusBarMin, settings.statusBarmax)
+    bg:SetStatusBarTexture(ns.barTextures[profileSettings.backgroundTexture])
+    bg:SetStatusBarColor(profileSettings.backgroundColor.r, profileSettings.backgroundColor.g, profileSettings.backgroundColor.b, profileSettings.backgroundColor.a)
+    bg:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
 end
 
 local function ReadSpellCooldown(spellID)
@@ -84,7 +84,7 @@ local function StopAnimation()
 end
 
 local function UpdateFill()
-    if ns.barDb == nil or not ns.barDb.barEnabled then
+    if ns.currentProfile == nil or not ns.currentProfile.settings.barEnabled then
         return
     end
 
@@ -100,7 +100,7 @@ local function UpdateFill()
      then
         progress = 1
         StopAnimation()
-		if ns.barDb.endFilled then
+		if ns.currentProfile.settings.endFilled then
 			bar:SetValue(1)
 		else
 			bar:SetValue(0)
@@ -108,7 +108,7 @@ local function UpdateFill()
 		return;
     end
 
-	if ns.barDb.fillReverse then
+	if ns.currentProfile.settings.fillReverse then
 		bar:SetValue(1 - progress)
 	else
 		bar:SetValue(progress)
@@ -117,8 +117,8 @@ end
 
 local function HandleGcdAction(self, event, ...)
     if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
-        if ns.barDb == nil then
-            ns:Log("Data Base is null",ns.logTypes.WARNING)
+        if ns.currentProfile == nil then
+            ns:Log("Profile is null",ns.logTypes.WARNING)
             return
         end
 
@@ -126,7 +126,6 @@ local function HandleGcdAction(self, event, ...)
 
 		if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
             StopAnimation()
-			ns:Log("Duration is secret" , ns.logTypes.WARNING)
 			return
 		end
 

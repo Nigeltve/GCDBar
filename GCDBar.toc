@@ -3,13 +3,15 @@
 ## Author: Flowlin
 ## Notes: Display a GCD as a bar
 ## Version: 0.0.1
-## SavedVariables: BarDB
+## SavedVariables: ProfileDB
+## SavedVariablesPerCharacter: ProfileName
 ## IconTexture: Interface\AddOns\GCDBar\Media\icon.tga
 
 embeds.xml
 Consts.lua
 Utils.lua
 DbHandler.lua
+ProfileManager.lua
 Commands.lua
 Core.lua
 Options.lua

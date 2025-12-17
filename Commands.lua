@@ -11,45 +11,84 @@ function SlashCmdList.GCDBAR(msg, _)
 	end
 
 	local cmd = args[1]
+	local arg1 = args[2]
 
-	if cmd == ns.command.show then
-		ns.barDb.barEnabled = true
+	if cmd == ns.cdbCommands.show then
+		ns.currentProfile.settings.barEnabled = true
 		ns:UpdateBarSettings()
 
 		return
 	end
 
-	if cmd == ns.command.hide then
-		ns.barDb.barEnabled = false
+	if cmd == ns.cdbCommands.hide then
+		ns.currentProfile.settings.barEnabled = false
 		ns:UpdateBarSettings()
 
 		return
 	end
 
-	if cmd == ns.command.toggle then
-		ns.barDb.barEnabled = not ns.barDb.barEnabled
+	if cmd == ns.cdbCommands.toggle then
+		ns.currentProfile.settings.barEnabled = not ns.currentProfile.settings.barEnabled
 		ns:UpdateBarSettings()
 
 		return
 	end
 
-	if cmd == ns.command.reset then
-		ns.barDb = CopyTable(ns.defaults)
+	if cmd == ns.cdbCommands.reset then
+		ns.currentProfile.settings = CopyTable(ns.defaultSettings)
 		ns:UpdateBarSettings()
-
 		return
+	end
+
+	if cmd == ns.cdbCommands.print then
+		if not ns.currentProfile or next(ns.currentProfile) == nil then
+			ns:Say("Nothing to print")
+		else
+			ns:PrintTable(ns.currentProfile)
+		end
 	end
 	
-	if cmd == nil or cmd == ns.command.options then
+	if cmd == ns.cdbCommands.options then
 		LibStub("AceConfigDialog-3.0"):Open("GCDBar")
 		return
 	end
 
-	if cmd == ns.command.help then
-		ns:Say("Commands")
-		ns:Say("/cdb – Opens the options window")
+	if cmd == ns.cdpCommands.list then
+		ns:Say("Listing all profile names")
+		ns.profileManager:ListProfileNames()
+		return
+	end
+
+	if cmd == ns.cdpCommands.current then
+		local profile = ns.profileManager:GetCurrentProfile()
+		ns:Say("You are on profile: " .. profile.name)
+	end
+
+	if cmd == ns.cdpCommands.create and arg1 ~= nil then
+		ns:Say("Creating profile with name: '" .. arg1 .. "' and And swapping to it!")
+		ns.profileManager:CreateNewProfile(arg1)
+	end
+
+	if cmd == ns.cdpCommands.delete and arg1 ~= nil then
+		ns:Say("Deleting profile with name: " .. arg1)
+		ns.profileManager:DeleteProfile(arg1)
+	end
+
+	if cmd == ns.cdpCommands.switch and arg1 ~= nil then
+		ns:Say("Switchign to profile with name: " .. arg1)
+		ns.profileManager:SwapProfileTo(arg1)
+	end
+
+	if cmd == nil or cmd == ns.cdbCommands.help then
+		ns:Say("CDBar Commands")
+		ns:Say("/cdb options – Opens the options window")
 		ns:Say("/cdb show/hide/toggle – Change bar display mode")
 		ns:Say("/cdb help – Display Help Commands")
+		ns:Say("/cdb list – Lists out all profile names")
+		ns:Say("/cdb current – Lists out the current profile name")
+		ns:Say("/cdb create {name} – creates a new profile and swaped with provided name")
+		ns:Say("/cdb delete {name} – deletes profile with provided name")
+		ns:Say("/cdb swap {name} – switches to profile with provided name")
 		return
 	end
 end

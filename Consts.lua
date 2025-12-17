@@ -11,33 +11,12 @@ ns.logTypes = {
     ERROR = "ERROR"
 }
 
-function ns:logLevelConvert(level)
-	if not type(level) == "number" then
-		return
-	end 
-
-	if level == 0 then return ns.logTypes.ERROR end
-	if level == 1 then return ns.logTypes.WARNING end
-	if level == 2 then return ns.logTypes.DEBUG end
-	if level == 3 then return ns.logTypes.INFO end
-end
-
-function ns:logTypeConvert(level)
-	if not type(level) == "string" then
-		return
-	end
-
-	if level == ns.logTypes.ERROR then return 0  end
-	if level == ns.logTypes.WARNING then return 1 end
-	if level == ns.logTypes.DEBUG then return 2 end
-	if level == ns.logTypes.INFO then return 3 end
-end
-
 ns.eventNames = {
 	ADDON_LOADED = "ADDON_LOADED",
     PLAYER_LOGIN = "PLAYER_LOGIN",
 	PLAYER_LOGOUT = "PLAYER_LOGOUT",
     PLAYER_ENTERING_WORLD = "PLAYER_ENTERING_WORLD",
+	PLAYER_LEAVING_WORLD = "PLAYER_LEAVING_WORLD",
     SPELL_CD_UPDATE = "SPELL_UPDATE_COOLDOWN",
     ACTIONBAR_CD_UPDATE = "ACTIONBAR_UPDATE_COOLDOWN",
     SPELLCAST_SUCCEEDED = "UNIT_SPELLCAST_SUCCEEDED",
@@ -60,6 +39,24 @@ ns.stratas = {
     TOOLTIP = "TOOLTIP"
 }
 
+ns.cdbCommands = {
+	print = "print",
+	show = "show",
+	hide = "hide",
+	toggle = "toggle",
+	reset = "reset",
+	help = "help",
+	options = "options",
+}
+
+ns.cdpCommands = {
+	list = "list",
+	current = "current",
+	create = "create",
+	delete = "delete",
+	switch = "swap"
+}
+
 ns.barTextures = {
     Default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
 	BantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
@@ -78,7 +75,7 @@ ns.spellIds = {
 	GCD = 61304
 }
 
----@class defaults
+---@class Settings
 ---@field barEnabled boolean
 ---@field offsetX number
 ---@field offsetY number
@@ -96,10 +93,10 @@ ns.spellIds = {
 ---@field strata string
 ---@field fillReverse boolean
 ---@field endFilled boolean
-ns.defaults = {
+ns.defaultSettings = {
 	barEnabled = true,
 	offsetX = 0,
-	offsetY = 0,
+	offsetY = -80,
 	barWidth = 144,
 	barHeight = 17,
 	boarderSize = 2,
@@ -116,24 +113,10 @@ ns.defaults = {
 	endFilled = true
 }
 
----@class ProfileDefaults
----@field name string?
----@field realm  string?
----@field settings defaults
-ns.profileDefault = {
+---@class Profile
+---@field name string
+---@field settings Settings
+ns.defaultProfile = {
     name = "default",
-    realm = nil,
-    settings = ns.defaults
-}
-
-ns.command = {
-	debug = "debug",
-	loglevel = "loglevel",
-	printdb = "printdb",
-	show = "show",
-	hide = "hide",
-	toggle = "toggle",
-	reset = "reset",
-	help = "help",
-	options = "options",
+    settings = ns.defaultSettings
 }

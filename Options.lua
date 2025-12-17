@@ -42,127 +42,35 @@ end
 
 -- Drop Down --
 
-local function SetDropDown(info, val)
+local function Setter (info, val) 
     local argType = info[#info]
-    if argType == "forgroundTexture" then
-        ns.barDb.forgroundTexture = val
-    elseif argType == "backgroundTexture" then
-        ns.barDb.backgroundTexture = val
-    elseif argType == "strata" then
-        ns.barDb.strata = val
-    end
-
+    ns.currentProfile.settings[argType] = val
     ns:UpdateBarSettings()
 end
 
-local function GetDropDown(info)
+local function Getter(info)
     local argType = info[#info]
-    if argType == "forgroundTexture" then
-        return ns.barDb.forgroundTexture
-    elseif argType == "backgroundTexture" then
-        return ns.barDb.backgroundTexture
-    elseif argType == "strata" then
-        return ns.barDb.strata
-    end
-end
-
--- Toggles --
-
-local function SetToggle(info, val)
-    local argType = info[#info]
-    if argType == "barEnabled" then
-        ns.barDb.barEnabled = val
-    elseif argType == "boarderEnabled" then
-        ns.barDb.boarderEnabled = val
-    end
-    
-    ns:UpdateBarSettings()
-end
-
-local function GetToggle(info)
-    local argType = info[#info]
-
-    if argType == "barEnabled" then
-        return ns.barDb.barEnabled
-    elseif argType == "boarderEnabled" then
-        return ns.barDb.boarderEnabled
-    end
-
-    return false
+    return ns.currentProfile.settings[argType]
 end
 
 -- Color --
 local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
-
-    if argType ==  "forgroundColor" then
-        ns.barDb.forgroundColor = newColor
-    elseif argType == "backgroundColor" then
-        ns.barDb.backgroundColor = newColor
-    elseif argType == "boarderColor" then
-        ns.barDb.boarderColor = newColor
-    end
-
-     ns:UpdateBarSettings()
+    ns.currentProfile.settings[argType] = newColor
+    ns:UpdateBarSettings()
 end
 
 local function GetColor(info)
     local argType = info[#info]
-    local color = { r = 1, g = 1, b = 1 , a = 1}
-
-    if argType ==  "forgroundColor" then
-        color = ns.barDb.forgroundColor
-    elseif argType == "backgroundColor" then
-        color = ns.barDb.backgroundColor
-     elseif argType == "boarderColor" then
-        color = ns.barDb.boarderColor
-    end
-
+    local color =  ns.currentProfile.settings[argType] or { r = 1, g = 1, b = 1 , a = 1}
     return color.r, color.g, color.b, color.a
-end
-
--- Ranges 
-local function SetRange(info, val)
-    local argType = info[#info]
-
-    if argType == "barWidth" then
-        ns.barDb.barWidth = val
-    elseif argType == "barHeight" then
-        ns.barDb.barHeight = val
-    elseif argType == "boarderSize" then
-        ns.barDb.boarderSize = val
-    elseif argType == "offsetX" then
-        ns.barDb.offsetX = val
-    elseif argType == "offsetY" then
-        ns.barDb.offsetY = val
-    end
-
-    ns:UpdateBarSettings()
-end
-
-local function GetRange(info)
-    local argType = info[#info]
-
-    if argType == "barWidth" then
-        return ns.barDb.barWidth
-    elseif argType == "barHeight" then
-        return ns.barDb.barHeight
-    elseif argType == "boarderSize" then
-        return ns.barDb.boarderSize
-    elseif argType == "offsetX" then
-        return ns.barDb.offsetX
-    elseif argType == "offsetY" then
-        return ns.barDb.offsetY
-    end
-
-    return minBarDim
 end
 
 local function IsboarderDisabled(info)
     local argType = info[#info]
     if argType == "boarderSize" or argType == "boarderColor" then
-        return not ns.barDb.boarderEnabled
+        return not ns.currentProfile.settings.boarderEnabled
     end
     return false
 end
@@ -211,16 +119,16 @@ local options = {
                     type  = "toggle",
                     name  = "ShowGCDBar",
                     desc  = "Set GCD Bar Visibility",
-                    set   = SetToggle,
-                    get   = GetToggle,
+                    set   = Setter,
+                    get   = Getter,
                     order = 10,
                     width = "full",
                 },
                 offsetX = {
                     type  = "range",
                     name  = "Horizontal Offset",
-                    set = SetRange,
-                    get = GetRange,
+                    set   = Setter,
+                    get   = Getter,
                     min   = -2000,
                     max   = 2000,
                     step  = 1,
@@ -230,8 +138,8 @@ local options = {
                 offsetY = {
                     type  = "range",
                     name  = "Vertical Offset",
-                    get = GetRange,
-                    set = SetRange,
+                    set   = Setter,
+                    get   = Getter,
                     min   = -2000,
                     max   = 2000,
                     step  = 1,
@@ -241,8 +149,8 @@ local options = {
                 forgroundTexture = {
                     type   = "select",
                     name   = "Forground Texture",
-                    set = SetDropDown,
-                    get = GetDropDown,
+                    set   = Setter,
+                    get   = Getter,
                     values = ns.barTextureChoices,
                     order  = 13,
                     width  = "full",
@@ -251,8 +159,8 @@ local options = {
                 backgroundTexture = {
                     type   = "select",
                     name   = "Background Texture",
-                    set = SetDropDown,
-                    get = GetDropDown,
+                    set   = Setter,
+                    get   = Getter,
                     values = ns.barTextureChoices,
                     order  = 14,
                     width  = "full",
@@ -279,8 +187,8 @@ local options = {
                 barWidth = {
                     type = "range",
                     name = "Bar Width",
-                    set = SetRange,
-                    get = GetRange,
+                    set   = Setter,
+                    get   = Getter,
                     min = minBarDim,
                     max = maxBardim,
                     step = 1,
@@ -290,8 +198,8 @@ local options = {
                 barHeight = {
                     type = "range",
                     name = "Bar Height",
-                    set = SetRange,
-                    get = GetRange,
+                    set   = Setter,
+                    get   = Getter,
                     min = minBarDim,
                     max = maxBardim,
                     step = 1,
@@ -302,8 +210,8 @@ local options = {
                     type  = "toggle",
                     name  = "Enable Boarder",
                     desc  = "Set Boarder Visibility",
-                    set   = SetToggle,
-                    get   = GetToggle,
+                    set   = Setter,
+                    get   = Getter,
                     order = 19,
                     width = 1,
                 },
@@ -320,8 +228,8 @@ local options = {
                 boarderSize = {
                     type = "range",
                     name = "Boarder Size",
-                    set = SetRange,
-                    get = GetRange,
+                    set   = Setter,
+                    get   = Getter,
                     min = 0,
                     max = 20,
                     step = 1,
@@ -332,8 +240,8 @@ local options = {
                 strata = {
                     type   = "select",
                     name   = "Bar Strata",
-                    set = SetDropDown,
-                    get = GetDropDown,
+                    set   = Setter,
+                    get   = Getter,
                     values = ns.stratas,
                     order  = 22,
                     width  = "full",

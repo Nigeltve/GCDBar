@@ -49,7 +49,7 @@ local function LogError(msg)
 end
 
 ---@param msg string
----@param logType string | nil
+---@param logType string?
 function ns:Log(msg, logType)
     if not ns.debug then
         return
@@ -68,11 +68,49 @@ function ns:Log(msg, logType)
     end
 end
 
+---@param level number 
+function ns:logLevelConvert(level)
+	if not type(level) == "number" then
+		return
+	end 
+
+	if level == 0 then return ns.logTypes.ERROR end
+	if level == 1 then return ns.logTypes.WARNING end
+	if level == 2 then return ns.logTypes.DEBUG end
+	if level == 3 then return ns.logTypes.INFO end
+end
+
+---@param level string
+function ns:logTypeConvert(level)
+	if not type(level) == "string" then
+		return
+	end
+
+	if level == ns.logTypes.ERROR then return 0  end
+	if level == ns.logTypes.WARNING then return 1 end
+	if level == ns.logTypes.DEBUG then return 2 end
+	if level == ns.logTypes.INFO then return 3 end
+end
+
+function ns:SaveCurrentProfile()
+    for _, profile in pairs(ns.profileManager.profiles) do
+        if profile.name == ns.currentProfile.name then
+            profile = ns.currentProfile
+            print("Saved "..profile.name)
+        end
+    end
+end
+
 ---@param tbl table
 ---@param indent number | nil
 ---@param seen table | nil
 -- Function to print nested tables in WoW
 function ns:PrintTable(tbl, indent, seen)
+    if tbl == nil then 
+        print("Table is nil")
+        return
+    end
+
     indent = indent or 0
     seen = seen or {}
     
