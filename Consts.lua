@@ -79,6 +79,23 @@ ns.spellIds = {
 }
 
 ---@class defaults
+---@field barEnabled boolean
+---@field offsetX number
+---@field offsetY number
+---@field barWidth number
+---@field barHeight number
+---@field boarderSize number
+---@field boarderEnabled boolean
+---@field forgroundColor table
+---@field backgroundColor table
+---@field boarderColor table
+---@field forgroundTexture string
+---@field backgroundTexture string
+---@field statusBarMin number
+---@field statusBarmax number 
+---@field strata string
+---@field fillReverse boolean
+---@field endFilled boolean
 ns.defaults = {
 	barEnabled = true,
 	offsetX = 0,
@@ -97,6 +114,16 @@ ns.defaults = {
 	strata = ns.stratas.LOW,
 	fillReverse = false,
 	endFilled = true
+}
+
+---@class ProfileDefaults
+---@field name string?
+---@field realm  string?
+---@field settings defaults
+ns.profileDefault = {
+    name = "default",
+    realm = nil,
+    settings = ns.defaults
 }
 
 ns.command = {
