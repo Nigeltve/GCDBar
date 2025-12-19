@@ -17,6 +17,15 @@ function pm:ListProfileNames()
     end
 end
 
+---@return table
+function pm:GetListProfileNames()
+    local profiles = {}
+    for k,v in pairs(pm.profiles) do
+        profiles[k] = k
+    end
+    return profiles
+end
+
 ---@param name string
 function pm:CreateNewProfile(name)
     if string.len(name) <= 0 then

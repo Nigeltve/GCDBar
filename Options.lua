@@ -40,7 +40,7 @@ do
     end
 end
 
--- Drop Down --
+-- general --
 
 local function Setter (info, val) 
     local argType = info[#info]
@@ -73,6 +73,23 @@ local function IsboarderDisabled(info)
         return not ns.currentProfile.settings.boarderEnabled
     end
     return false
+end
+
+-- profiles --
+
+local function ProfileSetter(info, val)
+    local argType = info[#info]
+    if argType == "profileNames" then
+        local pName = ns.profileManager.profiles[val].name
+        ns.profileManager:SwapProfileTo(pName)
+    end
+end
+
+local function ProfileGetter(info)
+    local argType = info[#info]
+    if argType == "profileNames" then
+        return ns.profileManager:GetCurrentProfile().name
+    end
 end
 
 
@@ -250,21 +267,48 @@ local options = {
             }
         },
 
+        profiles = {
+            type   = "group",
+            name   = "Profiles",
+            inline = true,
+            order  = 30,
+            args   = {
+                profileNames = {
+                    type   = "select",
+                    name   = "Profile",
+                    set   = ProfileSetter,
+                    get   = ProfileGetter,
+                    values = function ()
+                        return ns.profileManager:GetListProfileNames()
+                    end,
+                    -- values = ns.profileManager:GetListProfileNames(),
+                    order  = 31,
+                    width  = "full",
+                    style = "dropdown"
+                },
+            }
+        },
+
         help = {
             type   = "group",
             name   = "Help",
-            inline = true,
+            inline = true, 
             order  = 40,
             args   = {
                 helpText = {
                     type  = "description",
                     name  = [[
 Slash commands:
-/cdb show       - Show GCD Bar
-/cdb hide       - Hide GCD Bar
-/cdb toggle     - Toggle visibility
-/cdb reset      - Reset to defaults
-/cdb options    - brings up options]],
+/cdb show           – Show GCD Bar
+/cdb hide           – Hide GCD Bar
+/cdb toggle         – Toggle visibility
+/cdb reset          – Reset to defaults
+/cdb options        – brings up options
+/cdb list           – Lists out all profile names
+/cdb current        – Lists out the current profile name
+/cdb create {name}  – creates a new profile and swaped with provided name
+/cdb delete {name}  – deletes profile with provided name
+/cdb swap {name}    – switches to profile with provided name]],
                     order = 10,
                 },
             },
@@ -283,3 +327,5 @@ local function AddSub(name, path)
 end
 
 AddSub("Appearance", "appearance")
+AddSub("Profiles", "profiles")
+AddSub("Help", "help")
