@@ -40,7 +40,6 @@ ns.stratas = {
 }
 
 ns.cdbCommands = {
-	print = "print",
 	show = "show",
 	hide = "hide",
 	toggle = "toggle",

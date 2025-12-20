@@ -3,6 +3,8 @@ local ns = select(2, ...)
 
 SLASH_GCDBAR1 = '/cdb'
 
+local optionsOpen = false
+
 function SlashCmdList.GCDBAR(msg, _)
 	local args = {}
 
@@ -39,17 +41,15 @@ function SlashCmdList.GCDBAR(msg, _)
 		ns:UpdateBarSettings()
 		return
 	end
-
-	if cmd == ns.cdbCommands.print then
-		if not ns.currentProfile or next(ns.currentProfile) == nil then
-			ns:Say("Nothing to print")
-		else
-			ns:PrintTable(ns.currentProfile)
-		end
-	end
 	
 	if cmd == ns.cdbCommands.options then
-		LibStub("AceConfigDialog-3.0"):Open("GCDBar")
+		if not optionsOpen then
+			LibStub("AceConfigDialog-3.0"):Open("GCDBar")
+			optionsOpen = true
+		else 
+			LibStub("AceConfigDialog-3.0"):Close("GCDBar")
+			optionsOpen = false
+		end
 		return
 	end
 
@@ -62,18 +62,22 @@ function SlashCmdList.GCDBAR(msg, _)
 	if cmd == ns.cdpCommands.current then
 		local profile = ns.profileManager:GetCurrentProfile()
 		ns:Say("You are on profile: " .. profile.name)
+		return
 	end
 
 	if cmd == ns.cdpCommands.create and arg1 ~= nil then
 		ns.profileManager:CreateNewProfile(arg1)
+		return
 	end
 
 	if cmd == ns.cdpCommands.delete and arg1 ~= nil then
 		ns.profileManager:DeleteProfile(arg1)
+		return
 	end
 
 	if cmd == ns.cdpCommands.switch and arg1 ~= nil then
 		ns.profileManager:SwapProfileTo(arg1)
+		return
 	end
 
 	if cmd == nil or cmd == ns.cdbCommands.help then
