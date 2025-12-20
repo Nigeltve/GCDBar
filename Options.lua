@@ -40,6 +40,22 @@ do
     end
 end
 
+-- spacer
+
+---@param order number
+---@param width number | string
+---@return table
+local function CreateSpacer(order, width)
+    local spacer = {
+        type  = "description",
+        name  = "",
+        order = order,
+        width = width,
+    }
+
+    return spacer
+end
+
 -- general --
 
 local function Setter (info, val) 
@@ -77,18 +93,24 @@ end
 
 -- profiles --
 
+local profileToEdit = nil
+local newProfileName = ""
+
 local function ProfileSetter(info, val)
     local argType = info[#info]
     if argType == "profileNames" then
-        local pName = ns.profileManager.profiles[val].name
-        ns.profileManager:SwapProfileTo(pName)
+        profileToEdit = val
+        return profileToEdit
     end
 end
 
 local function ProfileGetter(info)
     local argType = info[#info]
     if argType == "profileNames" then
-        return ns.profileManager:GetCurrentProfile().name
+        if not profileToEdit then
+            profileToEdit = ns.profileManager:GetCurrentProfile().name
+        end
+        return profileToEdit
     end
 end
 
@@ -281,11 +303,79 @@ local options = {
                     values = function ()
                         return ns.profileManager:GetListProfileNames()
                     end,
-                    -- values = ns.profileManager:GetListProfileNames(),
                     order  = 31,
-                    width  = "full",
-                    style = "dropdown"
+                    style = "dropdown",
+                    width = "full",
                 },
+                SwapProfile = {
+                    type = "execute",
+                    name = "Swap to",
+                    desc = "Tries to swap sthe profile with the name in the dropdown",
+                    func = function()
+                        if profileToEdit == nil then
+                            return
+                        end
+
+                        ns.profileManager:SwapProfileTo(profileToEdit)
+                    end,
+                    order = 32,
+                    width = 0.7
+                },
+                spacer1 = CreateSpacer(32.5, 0.05),
+                deleteProfile = {
+                    type = "execute",
+                    name = "Delete Profile",
+                    desc = "Tries to delete the profile with the name in the dropdown",
+                    func = function()
+                        if profileToEdit == nil then
+                            return
+                        end
+                    
+                        if ns.profileManager:DeleteProfile(profileToEdit) then
+                            profileToEdit = ns.profileManager:GetCurrentProfile().name
+                        end
+                    end,
+                    order = 33,
+                    width = 0.7
+                },
+                spacer2 = CreateSpacer(33.5, 0.1),
+                profileNameInput = {
+                    type="input",
+                    name ="New Profile Name",
+                    set = function(_, val)
+                        newProfileName = val
+                    end,
+                    get = function ()
+                        return newProfileName
+                    end,
+                    order = 34
+                },
+                spacer3 = CreateSpacer(34.5, 0.1),
+                createProfile = {
+                    type = "execute",
+                    name = "Create",
+                    func = function()
+                        if newProfileName == "" then 
+                            return
+                        end
+                        
+                        local success = ns.profileManager:CreateNewProfile(newProfileName)
+                        if  not success then 
+                            newProfileName = ""
+                            return
+                        end
+                        profileToEdit = newProfileName
+                        newProfileName = ""
+                    end,
+                    order = 35,
+                    width = 0.7
+                },
+                currentProfileName = {
+                    type = "description",
+                    name = "Current Profile: ".. tostring(ProfileName),
+                    order = 36, 
+                    width = "full"
+                }
             }
         },
 

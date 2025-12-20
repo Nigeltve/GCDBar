@@ -65,17 +65,14 @@ function SlashCmdList.GCDBAR(msg, _)
 	end
 
 	if cmd == ns.cdpCommands.create and arg1 ~= nil then
-		ns:Say("Creating profile with name: '" .. arg1 .. "' and And swapping to it!")
 		ns.profileManager:CreateNewProfile(arg1)
 	end
 
 	if cmd == ns.cdpCommands.delete and arg1 ~= nil then
-		ns:Say("Deleting profile with name: " .. arg1)
 		ns.profileManager:DeleteProfile(arg1)
 	end
 
 	if cmd == ns.cdpCommands.switch and arg1 ~= nil then
-		ns:Say("Switchign to profile with name: " .. arg1)
 		ns.profileManager:SwapProfileTo(arg1)
 	end
 

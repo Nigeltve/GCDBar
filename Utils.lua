@@ -96,7 +96,6 @@ function ns:SaveCurrentProfile()
     for _, profile in pairs(ns.profileManager.profiles) do
         if profile.name == ns.currentProfile.name then
             profile = ns.currentProfile
-            print("Saved "..profile.name)
         end
     end
 end
