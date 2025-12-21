@@ -10,6 +10,7 @@ ns.currentProfile = nil
 local function HandleDB(self, event, args1)
 	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
         if ProfileDB == nil or next(ProfileDB) == nil then
+            ns:Say("Setting up defaults")
             ProfileDB = {
                 default = ns.defaultProfile
             }
@@ -21,6 +22,10 @@ local function HandleDB(self, event, args1)
             ProfileName = ProfileDB.default.name
         end
         
+        if ns.profileManager.profiles[ProfileName] == nil then
+             ProfileName = ProfileDB.default.name
+        end
+
         ns.currentProfile = ns.profileManager.profiles[ProfileName]
         ns:UpdateBarSettings()
     elseif event == ns.eventNames.PLAYER_LOGOUT or event == ns.eventNames.PLAYER_LEAVING_WORLD then

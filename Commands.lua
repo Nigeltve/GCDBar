@@ -36,12 +36,22 @@ function SlashCmdList.GCDBAR(msg, _)
 		return
 	end
 
+	if cmd == ns.cdbCommands.lock then
+		ns:LockBar()
+		return
+	end
+
+	if cmd == ns.cdbCommands.unlock then
+		ns:UnlockBar()
+		return
+	end
+
 	if cmd == ns.cdbCommands.reset then
 		ns.currentProfile.settings = CopyTable(ns.defaultSettings)
 		ns:UpdateBarSettings()
 		return
 	end
-	
+
 	if cmd == ns.cdbCommands.options then
 		if not optionsOpen then
 			LibStub("AceConfigDialog-3.0"):Open("GCDBar")

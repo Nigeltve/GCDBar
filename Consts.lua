@@ -44,6 +44,8 @@ ns.cdbCommands = {
 	hide = "hide",
 	toggle = "toggle",
 	reset = "reset",
+	lock = "lock",
+	unlock = "unlock",
 	help = "help",
 	options = "options",
 }
@@ -117,5 +119,5 @@ ns.defaultSettings = {
 ---@field settings Settings
 ns.defaultProfile = {
     name = "default",
-    settings = ns.defaultSettings
+    settings = ns.defaultSettings,
 }

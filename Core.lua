@@ -7,12 +7,64 @@ local animDuration = nil
 
 
 local bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
+local unlockText = bar:CreateFontString(nil, "OVERLAY")
+unlockText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+unlockText:SetPoint("CENTER", bar, "CENTER", 0, 0)
 
 local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
-local bg = CreateFrame("StatusBar", nil, bar)
+local bg = CreateFrame("StatusBar" , nil, bar)
 
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
 bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
+
+
+local function OnBarMouseUp()
+    bar:StopMovingOrSizing()
+    local _, _, _, offsetX, offsetY = bar:GetPoint()
+    ns.currentProfile.settings.offsetX = offsetX
+    ns.currentProfile.settings.offsetY = offsetY
+
+    local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+    AceConfigRegistry:NotifyChange("GCDBar")
+end
+
+local function OnBarMouseDown()
+    bar:StartMoving()
+end
+
+function ns:UnlockBar()
+    if not bar then
+        ns:Say("Bar was not initialised")
+        return
+    end
+
+    ns:Say("Unlocked")
+
+    unlockText:SetText("Unlocked")
+
+    bar:SetMovable(true)
+    bar:EnableMouse(true)
+    bar:SetScript("OnMouseDown", OnBarMouseDown)
+    bar:SetScript("OnMouseUp", OnBarMouseUp)
+end
+
+function ns:LockBar()
+    if not bar then
+        ns:Say("Bar was not initialised")
+        return
+    end
+
+    
+    ns:Say("Locked")
+
+    unlockText:SetText("")
+
+    bar:SetMovable(false)
+    bar:EnableMouse(false)
+
+    bar:SetScript("OnMouseDown", nil)
+    bar:SetScript("OnMouseUp", nil)
+end
 
 function ns:UpdateBarSettings()
 	if not ns.currentProfile then
@@ -140,3 +192,4 @@ local function HandleGcdAction(self, event, ...)
 end
 
 bar:SetScript("OnEvent", HandleGcdAction)
+
