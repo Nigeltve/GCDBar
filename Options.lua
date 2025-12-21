@@ -114,7 +114,6 @@ local function ProfileGetter(info)
     end
 end
 
-
 -- --------------------------------------------------
 -- AceConfig options table
 -- --------------------------------------------------
@@ -161,7 +160,21 @@ local options = {
                     set   = Setter,
                     get   = Getter,
                     order = 10,
-                    width = "full",
+                },
+                LockToggle = {
+                    type = "execute",
+                    name = "Move Bar",
+                    func = function()
+                        if ns.locked then 
+                            ns:UnlockBar()
+                        else
+                            ns:LockBar()
+                            
+                        end
+                    end,
+                    order = 10.5,
+                    width = 0.7
+
                 },
                 offsetX = {
                     type  = "range",

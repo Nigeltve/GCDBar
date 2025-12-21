@@ -76,6 +76,8 @@ ns.spellIds = {
 	GCD = 61304
 }
 
+ns.locked = true
+
 ---@class Settings
 ---@field barEnabled boolean
 ---@field offsetX number

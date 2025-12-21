@@ -5,7 +5,6 @@ local animTicker = nil
 local animStart = nil
 local animDuration = nil
 
-
 local bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
 local unlockText = bar:CreateFontString(nil, "OVERLAY")
 unlockText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
@@ -40,12 +39,15 @@ function ns:UnlockBar()
 
     ns:Say("Unlocked")
 
+    ns.locked = false
+
     unlockText:SetText("Unlocked")
 
-    bar:SetMovable(true)
-    bar:EnableMouse(true)
+    bar:SetMovable(not ns.locked)
+    bar:EnableMouse(not ns.locked)
     bar:SetScript("OnMouseDown", OnBarMouseDown)
     bar:SetScript("OnMouseUp", OnBarMouseUp)
+    
 end
 
 function ns:LockBar()
@@ -54,13 +56,14 @@ function ns:LockBar()
         return
     end
 
-    
     ns:Say("Locked")
 
     unlockText:SetText("")
 
-    bar:SetMovable(false)
-    bar:EnableMouse(false)
+    ns.locked = true
+
+    bar:SetMovable(ns.locked)
+    bar:EnableMouse(ns.locked)
 
     bar:SetScript("OnMouseDown", nil)
     bar:SetScript("OnMouseUp", nil)

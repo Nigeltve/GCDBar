@@ -92,9 +92,10 @@ function SlashCmdList.GCDBAR(msg, _)
 
 	if cmd == nil or cmd == ns.cdbCommands.help then
 		ns:Say("CDBar Commands")
+		ns:Say("/cdb help – Display Help Commands")
 		ns:Say("/cdb options – Opens the options window")
 		ns:Say("/cdb show/hide/toggle – Change bar display mode")
-		ns:Say("/cdb help – Display Help Commands")
+		ns:Say("/cdb lock/unlock – lock or unlock bar to be movable by the mouse")
 		ns:Say("/cdb list – Lists out all profile names")
 		ns:Say("/cdb current – Lists out the current profile name")
 		ns:Say("/cdb create {name} – creates a new profile and swaped with provided name")
