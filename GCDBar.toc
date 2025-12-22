@@ -10,8 +10,9 @@
 embeds.xml
 Consts.lua
 Utils.lua
-DbHandler.lua
 ProfileManager.lua
+DbHandler.lua
+BarManager.lua
 Commands.lua
-Core.lua
+# Core.lua
 Options.lua

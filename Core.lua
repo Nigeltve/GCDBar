@@ -5,120 +5,6 @@ local animTicker = nil
 local animStart = nil
 local animDuration = nil
 
-local bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
-local unlockText = bar:CreateFontString(nil, "OVERLAY")
-unlockText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-unlockText:SetPoint("CENTER", bar, "CENTER", 0, 0)
-
-local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
-local bg = CreateFrame("StatusBar" , nil, bar)
-
-bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
-bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
-
-
-local function OnBarMouseUp()
-    bar:StopMovingOrSizing()
-    local _, _, _, offsetX, offsetY = bar:GetPoint()
-    ns.currentProfile.settings.offsetX = offsetX
-    ns.currentProfile.settings.offsetY = offsetY
-
-    local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
-    AceConfigRegistry:NotifyChange("GCDBar")
-end
-
-local function OnBarMouseDown()
-    bar:StartMoving()
-end
-
-function ns:UnlockBar()
-    if not bar then
-        ns:Say("Bar was not initialised")
-        return
-    end
-
-    ns:Say("Unlocked")
-
-    ns.locked = false
-
-    unlockText:SetText("Unlocked")
-
-    bar:SetMovable(not ns.locked)
-    bar:EnableMouse(not ns.locked)
-    bar:SetScript("OnMouseDown", OnBarMouseDown)
-    bar:SetScript("OnMouseUp", OnBarMouseUp)
-    
-end
-
-function ns:LockBar()
-    if not bar then
-        ns:Say("Bar was not initialised")
-        return
-    end
-
-    ns:Say("Locked")
-
-    unlockText:SetText("")
-
-    ns.locked = true
-
-    bar:SetMovable(ns.locked)
-    bar:EnableMouse(ns.locked)
-
-    bar:SetScript("OnMouseDown", nil)
-    bar:SetScript("OnMouseUp", nil)
-end
-
-function ns:UpdateBarSettings()
-	if not ns.currentProfile then
-		ns:Log("No Prfile to be found", ns.logTypes.ERROR)
-		return;
-	end
-
-    local profileSettings = ns.currentProfile.settings
-    local frameLevel = 10
-
-	if not profileSettings.barEnabled then
-		bar:Hide()
-        return
-	else
-		bar:Show()
-	end
-
-    if not profileSettings.boarderEnabled or profileSettings.boarderSize <= 0 then
-        border:Hide()
-    else
-        border:SetAllPoints(bar)
-        border:SetBackdrop({
-            edgeFile = ns.outlinetextures.default,
-            edgeSize = profileSettings.boarderSize,
-        })
-        border:SetBackdropBorderColor(profileSettings.boarderColor.r, profileSettings.boarderColor.g, profileSettings.boarderColor.b, profileSettings.boarderColor.a)
-        border:SetFrameStrata(ns.stratas[profileSettings.strata])
-        border:Show()
-    end
-
-    bar:SetPoint("CENTER", profileSettings.offsetX, profileSettings.offsetY)
-    bar:SetSize(profileSettings.barWidth, profileSettings.barHeight)
-    bar:SetFrameStrata(ns.stratas[profileSettings.strata])
-    bar:SetFrameLevel(frameLevel)
-    bar:SetStatusBarTexture(ns.barTextures[profileSettings.forgroundTexture])
-    bar:SetStatusBarColor(profileSettings.forgroundColor.r, profileSettings.forgroundColor.g, profileSettings.forgroundColor.b, profileSettings.forgroundColor.a)
-    bar:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
-
-    if(not profileSettings.endFilled) then
-		bar:SetValue(0)
-	end
-
-    bg:SetPoint("CENTER")
-    bg:SetSize(profileSettings.barWidth, profileSettings.barHeight)
-    bg:SetFrameStrata(ns.stratas[profileSettings.strata])
-    bg:SetFrameLevel(bar:GetFrameLevel() - 1)
-    bg:SetStatusBarTexture(ns.barTextures[profileSettings.backgroundTexture])
-    bg:SetStatusBarColor(profileSettings.backgroundColor.r, profileSettings.backgroundColor.g, profileSettings.backgroundColor.b, profileSettings.backgroundColor.a)
-    bg:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
-end
-
 local function ReadSpellCooldown(spellID)
     if C_Spell and C_Spell.GetSpellCooldown then
         local info = C_Spell.GetSpellCooldown(spellID)
@@ -135,7 +21,6 @@ local function StopAnimation()
     animTicker = nil
     animStart = nil
     animDuration = nil
-    
 end
 
 local function UpdateFill()
@@ -170,7 +55,7 @@ local function UpdateFill()
 	end
 end
 
-local function HandleGcdAction(self, event, ...)
+local function HandleGcdAction(_, event)
     if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
         if ns.currentProfile == nil then
             ns:Log("Profile is null",ns.logTypes.WARNING)

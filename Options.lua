@@ -1,9 +1,6 @@
 ---@class ns
 local ns = select(2, ...)
 
-local minBarDim = 5
-local maxBardim = 2000
-
 -- Suppress the 12.0 beta SetText(alpha) range error from AceConfig/Settings,
 do
     local oldHandler = geterrorhandler()
@@ -169,11 +166,13 @@ local options = {
                             ns:UnlockBar()
                         else
                             ns:LockBar()
-                            
                         end
                     end,
                     order = 10.5,
-                    width = 0.7
+                    width = 0.7,
+                    disabled = function()
+                        return ns.currentProfile.settings.barEnabled
+                    end
 
                 },
                 offsetX = {
@@ -241,8 +240,8 @@ local options = {
                     name = "Bar Width",
                     set   = Setter,
                     get   = Getter,
-                    min = minBarDim,
-                    max = maxBardim,
+                    min = ns.minBarDim,
+                    max = ns.maxBardim,
                     step = 1,
                     order = 17,
                     width = "full"
@@ -252,8 +251,8 @@ local options = {
                     name = "Bar Height",
                     set   = Setter,
                     get   = Getter,
-                    min = minBarDim,
-                    max = maxBardim,
+                    min = ns.minBarDim,
+                    max = ns.maxBardim,
                     step = 1,
                     order = 18,
                     width = "full"
