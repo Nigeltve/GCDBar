@@ -13,6 +13,6 @@ Utils.lua
 ProfileManager.lua
 DbHandler.lua
 BarManager.lua
+GcdEventHandler.lua
 Commands.lua
-# Core.lua
 Options.lua

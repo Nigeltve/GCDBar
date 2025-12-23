@@ -58,7 +58,7 @@ end
 local function Setter (info, val) 
     local argType = info[#info]
     ns.currentProfile.settings[argType] = val
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
 end
 
 local function Getter(info)
@@ -71,7 +71,7 @@ local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
     ns.currentProfile.settings[argType] = newColor
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
 end
 
 local function GetColor(info)
@@ -163,15 +163,15 @@ local options = {
                     name = "Move Bar",
                     func = function()
                         if ns.locked then 
-                            ns:UnlockBar()
+                            ns.barManager:UnlockBar()
                         else
-                            ns:LockBar()
+                            ns.barManager:LockBar()
                         end
                     end,
                     order = 10.5,
                     width = 0.7,
                     disabled = function()
-                        return ns.currentProfile.settings.barEnabled
+                        return not ns.currentProfile.settings.barEnabled
                     end
 
                 },

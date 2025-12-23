@@ -93,7 +93,7 @@ function pm:SwapProfileTo(name)
     
     pm:SaveCurrentProfile()
     ns.currentProfile = pm.profiles[name]
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
     ns:Say("Swapped Profile: ".. name)
     return true
 end

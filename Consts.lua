@@ -123,7 +123,6 @@ ns.defaultSettings = {
 
 ---@class BarFrames
 ---@field Bar StatusBar
----@field 
 
 ---@class Profile
 ---@field name string

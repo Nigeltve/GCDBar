@@ -28,6 +28,12 @@ local function UpdateFill()
         return
     end
 
+    if ns.barManager.bar == nil then
+        return
+    end
+
+    local bar = ns.barManager.bar
+
     if not animStart or not animDuration or animDuration <= 0 then
         StopAnimation()
         return
@@ -56,28 +62,45 @@ local function UpdateFill()
 end
 
 local function HandleGcdAction(_, event)
-    if event == ns.eventNames.SPELLCAST_START or event == ns.eventNames.SPELLCAST_SUCCEEDED then
-        if ns.currentProfile == nil then
-            ns:Log("Profile is null",ns.logTypes.WARNING)
-            return
-        end
+     if event ~= ns.eventNames.SPELLCAST_START
+       and event ~= ns.eventNames.SPELLCAST_SUCCEEDED then
+        return
+    end
+    
+    local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
-		local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
+    if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
+        StopAnimation()
+        return
+    end
 
-		if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
-            StopAnimation()
-			return
-		end
+    if start and duration then
+        StopAnimation()
 
-		if start and duration then
-            StopAnimation()
-
-            animStart = start
-            animDuration = duration
-            animTicker = C_Timer.NewTicker(0.016, UpdateFill)
-		end
+        animStart = start
+        animDuration = duration
+        animTicker = C_Timer.NewTicker(0.016, UpdateFill)
     end
 end
 
-bar:SetScript("OnEvent", HandleGcdAction)
 
+---@param event string
+local function HandleSetGCDAction(_, event, _)
+    if event ~= ns.eventNames.PLAYER_LOGIN then return end
+
+    if ns.currentProfile == nil then
+        ns:Log("Profile is null",ns.logTypes.WARNING)
+        return
+    end
+
+    if not ns.barManager.isSet then
+            ns:Log("Failed to set up bar",ns.logTypes.WARNING)
+            return
+    end
+
+    ns.barManager.bar:SetScript("OnEvent", HandleGcdAction)
+end
+
+local initFrame = CreateFrame("Frame", nil, UIParent)
+initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
+initFrame:SetScript("OnEvent", HandleSetGCDAction)

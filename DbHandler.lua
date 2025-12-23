@@ -34,8 +34,8 @@ local function HandleDB(self, event, args1)
     end
 end
 
-local loginFrame = CreateFrame("Frame", nil, UIParent)
-loginFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
-loginFrame:RegisterEvent(ns.eventNames.PLAYER_LOGOUT)
-loginFrame:RegisterEvent(ns.eventNames.PLAYER_LEAVING_WORLD)
-loginFrame:SetScript("OnEvent", HandleDB)
+local initFrame = CreateFrame("Frame", nil, UIParent)
+initFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
+initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGOUT)
+initFrame:RegisterEvent(ns.eventNames.PLAYER_LEAVING_WORLD)
+initFrame:SetScript("OnEvent", HandleDB)
