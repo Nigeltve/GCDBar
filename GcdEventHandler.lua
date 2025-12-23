@@ -62,11 +62,25 @@ local function UpdateFill()
 end
 
 local function HandleGcdAction(_, event)
-     if event ~= ns.eventNames.SPELLCAST_START
-       and event ~= ns.eventNames.SPELLCAST_SUCCEEDED then
+
+    if event == ns.eventNames.PLAYER_LOGIN then
+        if ns.currentProfile == nil then
+            ns:Log("Profile is null",ns.logTypes.WARNING)
+            return
+        end
+
+        if not ns.barManager.isSet then
+                ns:Log("Failed to set up bar",ns.logTypes.WARNING)
+                return
+        end
+
+        ns.barManager.bar:SetScript("OnEvent", HandleGcdAction)
+    end
+
+    if event ~= ns.eventNames.SPELLCAST_START and event ~= ns.eventNames.SPELLCAST_SUCCEEDED then
         return
     end
-    
+ 
     local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
 
     if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
@@ -83,24 +97,6 @@ local function HandleGcdAction(_, event)
     end
 end
 
-
----@param event string
-local function HandleSetGCDAction(_, event, _)
-    if event ~= ns.eventNames.PLAYER_LOGIN then return end
-
-    if ns.currentProfile == nil then
-        ns:Log("Profile is null",ns.logTypes.WARNING)
-        return
-    end
-
-    if not ns.barManager.isSet then
-            ns:Log("Failed to set up bar",ns.logTypes.WARNING)
-            return
-    end
-
-    ns.barManager.bar:SetScript("OnEvent", HandleGcdAction)
-end
-
 local initFrame = CreateFrame("Frame", nil, UIParent)
 initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
-initFrame:SetScript("OnEvent", HandleSetGCDAction)
+initFrame:SetScript("OnEvent", HandleGcdAction)

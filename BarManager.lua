@@ -19,46 +19,41 @@ ns.barManager = {
 local bm = ns.barManager
 
 function bm:CreateBars()
-    local bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
-    local unlockText = bar:CreateFontString(nil, "OVERLAY")
-    unlockText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-    unlockText:SetPoint("CENTER", bar, "CENTER", 0, 0)
+    bm.bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
+    bm.unlockText = bm.bar:CreateFontString(nil, "OVERLAY")
+    bm.unlockText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+    bm.unlockText:SetPoint("CENTER", bm.bar, "CENTER", 0, 0)
 
-    local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
-    local backGround = CreateFrame("StatusBar" , nil, bar)
+    bm.border = CreateFrame("Frame", nil, bm.bar, "BackdropTemplate")
+    bm.backGround = CreateFrame("StatusBar" , nil, bm.bar)
 
-    bar:RegisterEvent(ns.eventNames.PLAYER_ENTERING_WORLD)
-    bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
-    bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
+    bm.bar:RegisterEvent(ns.eventNames.PLAYER_ENTERING_WORLD)
+    bm.bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
+    bm.bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
 
-    bm.bar = bar
-    bm.unlockText = unlockText
-    bm.border = border
-    bm.backGround = backGround
-
-    bm.EHLeft = bar:CreateTexture(nil, "OVERLAY")
+    bm.EHLeft = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHLeft:SetColorTexture(1, 1, 1, 0.5)
     bm.EHLeft:SetWidth(ns.edgeThreshold)
-    bm.EHLeft:SetPoint("TOPLEFT", bar, "TOPLEFT", 0, 0)
-    bm.EHLeft:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", 0, 0)
+    bm.EHLeft:SetPoint("TOPLEFT", bm.bar, "TOPLEFT", 0, 0)
+    bm.EHLeft:SetPoint("BOTTOMLEFT", bm.bar, "BOTTOMLEFT", 0, 0)
 
-    bm.EHRight = bar:CreateTexture(nil, "OVERLAY")
+    bm.EHRight = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHRight:SetColorTexture(1, 1, 1, 0.5)
     bm.EHRight:SetWidth(ns.edgeThreshold)
-    bm.EHRight:SetPoint("TOPRIGHT", bar, "TOPRIGHT", 0, 0)
-    bm.EHRight:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 0, 0)
+    bm.EHRight:SetPoint("TOPRIGHT", bm.bar, "TOPRIGHT", 0, 0)
+    bm.EHRight:SetPoint("BOTTOMRIGHT", bm.bar, "BOTTOMRIGHT", 0, 0)
 
-    bm.EHTop = bar:CreateTexture(nil, "OVERLAY")
+    bm.EHTop = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHTop:SetColorTexture(1, 1, 1, 0.5)
     bm.EHTop:SetHeight(ns.edgeThreshold)
-    bm.EHTop:SetPoint("TOPLEFT", bar, "TOPLEFT", 0, 0)
-    bm.EHTop:SetPoint("TOPRIGHT", bar, "TOPRIGHT", 0, 0)
+    bm.EHTop:SetPoint("TOPLEFT", bm.bar, "TOPLEFT", 0, 0)
+    bm.EHTop:SetPoint("TOPRIGHT", bm.bar, "TOPRIGHT", 0, 0)
 
-    bm.EHBottom = bar:CreateTexture(nil, "OVERLAY")
+    bm.EHBottom = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHBottom:SetColorTexture(1, 1, 1, 0.5)
     bm.EHBottom:SetHeight(ns.edgeThreshold)
-    bm.EHBottom:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", 0, 0)
-    bm.EHBottom:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 0, 0)
+    bm.EHBottom:SetPoint("BOTTOMLEFT", bm.bar, "BOTTOMLEFT", 0, 0)
+    bm.EHBottom:SetPoint("BOTTOMRIGHT", bm.bar, "BOTTOMRIGHT", 0, 0)
 
     bm:HideAllEdgeHighlights()
     bm:UpdateBarSettings()
@@ -103,8 +98,14 @@ function bm:UpdateBarSettings()
     bm.bar:SetStatusBarTexture(ns.barTextures[profileSettings.forgroundTexture])
     bm.bar:SetStatusBarColor(profileSettings.forgroundColor.r, profileSettings.forgroundColor.g, profileSettings.forgroundColor.b, profileSettings.forgroundColor.a)
     bm.bar:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
+    
+    if profileSettings.isVertical then
+        bm.bar:SetOrientation("VERTICAL")
+    else
+        bm.bar:SetOrientation("HORIZONTAL")
+    end
 
-    if(not profileSettings.endFilled) then
+    if not profileSettings.endFilled then
 		bm.bar:SetValue(0)
 	end
 

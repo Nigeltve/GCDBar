@@ -298,6 +298,14 @@ local options = {
                     width  = "full",
                     style = "dropdown"
                 },
+                isVertical = {
+                    type = "toggle",
+                    name = "Fill Vertical",
+                    desc  = "Sets the bar fill directions",
+                    set   = Setter,
+                    get   = Getter,
+                    order = 23
+                }
             }
         },
 

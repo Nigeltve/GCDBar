@@ -101,6 +101,7 @@ ns.resizeEdge = nil
 ---@field strata string
 ---@field fillReverse boolean
 ---@field endFilled boolean
+---@field isVertical boolean
 ns.defaultSettings = {
 	barEnabled = true,
 	offsetX = 0,
@@ -118,7 +119,8 @@ ns.defaultSettings = {
 	statusBarmax = 1,
 	strata = ns.stratas.LOW,
 	fillReverse = false,
-	endFilled = true
+	endFilled = true,
+	isVertical = false
 }
 
 ---@class BarFrames
