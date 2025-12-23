@@ -78,6 +78,11 @@ ns.spellIds = {
 
 ns.locked = true
 
+ns.minBarDim = 10
+ns.maxBardim = 2000
+ns.edgeThreshold = 7
+ns.resizeEdge = nil
+
 ---@class Settings
 ---@field barEnabled boolean
 ---@field offsetX number
@@ -115,6 +120,9 @@ ns.defaultSettings = {
 	fillReverse = false,
 	endFilled = true
 }
+
+---@class BarFrames
+---@field Bar StatusBar
 
 ---@class Profile
 ---@field name string

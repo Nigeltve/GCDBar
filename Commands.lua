@@ -17,38 +17,37 @@ function SlashCmdList.GCDBAR(msg, _)
 
 	if cmd == ns.cdbCommands.show then
 		ns.currentProfile.settings.barEnabled = true
-		ns:UpdateBarSettings()
-
+		ns.barManager:UpdateBarSettings()
 		return
 	end
 
 	if cmd == ns.cdbCommands.hide then
 		ns.currentProfile.settings.barEnabled = false
-		ns:UpdateBarSettings()
+		ns.barManager:UpdateBarSettings()
 
 		return
 	end
 
 	if cmd == ns.cdbCommands.toggle then
 		ns.currentProfile.settings.barEnabled = not ns.currentProfile.settings.barEnabled
-		ns:UpdateBarSettings()
+		ns.barManager:UpdateBarSettings()
 
 		return
 	end
 
 	if cmd == ns.cdbCommands.lock then
-		ns:LockBar()
+		ns.barManager:LockBar()
 		return
 	end
 
 	if cmd == ns.cdbCommands.unlock then
-		ns:UnlockBar()
+		ns.barManager:UnlockBar()
 		return
 	end
 
 	if cmd == ns.cdbCommands.reset then
 		ns.currentProfile.settings = CopyTable(ns.defaultSettings)
-		ns:UpdateBarSettings()
+		ns.barManager:UpdateBarSettings()
 		return
 	end
 

@@ -92,54 +92,11 @@ function ns:logTypeConvert(level)
 	if level == ns.logTypes.INFO then return 3 end
 end
 
-function ns:SaveCurrentProfile()
-    for _, profile in pairs(ns.profileManager.profiles) do
-        if profile.name == ns.currentProfile.name then
-            profile = ns.currentProfile
-        end
-    end
-end
-
 ---@param tbl table
----@param indent number | nil
----@param seen table | nil
--- Function to print nested tables in WoW
-function ns:PrintTable(tbl, indent, seen)
+function ns:Dump(tbl)
     if tbl == nil then 
         print("Table is nil")
         return
     end
-
-    indent = indent or 0
-    seen = seen or {}
-    
-    -- Prevent infinite recursion for circular references
-    if seen[tbl] then
-        print(string.rep("  ", indent) .. "(circular reference)")
-        return
-    end
-    seen[tbl] = true
-    
-    -- Handle non-table types
-    if type(tbl) ~= "table" then
-        print(string.rep("  ", indent) .. tostring(tbl))
-        return
-    end
-    
-    -- Print table contents
-    for k, v in pairs(tbl) do
-        local formatting = string.rep("  ", indent) .. tostring(k) .. ": "
-        
-        if type(v) == "table" then
-            print(formatting .. "{")
-            ns:PrintTable(v, indent + 1, seen)
-            print(string.rep("  ", indent) .. "}")
-        elseif type(v) == "function" then
-            print(formatting .. "<function>")
-        elseif type(v) == "string" then
-            print(formatting .. '"' .. v .. '"')
-        else
-            print(formatting .. tostring(v))
-        end
-    end
+    DevTools_Dump(tbl)
 end

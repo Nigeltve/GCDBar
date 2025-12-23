@@ -2,14 +2,15 @@
 local ns = select(2, ...)
 
 ---@class ProfileManager
+---@field profile table
 ns.profileManager = {
     profiles = {
+        default = ns.defaultProfile
     }
 }
 
 ---@class ProfileManager
 local pm = ns.profileManager
-
 
 function pm:ListProfileNames()
     for k,v in pairs(pm.profiles) do
@@ -90,9 +91,9 @@ function pm:SwapProfileTo(name)
         return false
     end
     
-    ns:SaveCurrentProfile()
+    pm:SaveCurrentProfile()
     ns.currentProfile = pm.profiles[name]
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
     ns:Say("Swapped Profile: ".. name)
     return true
 end
@@ -106,4 +107,12 @@ end
 ---@return Profile
 function pm:GetCurrentProfile()
     return ns.currentProfile
+end
+
+function pm:SaveCurrentProfile()
+    for _, profile in pairs(ns.profileManager.profiles) do
+        if profile.name == ns.currentProfile.name then
+            profile = ns.currentProfile
+        end
+    end
 end

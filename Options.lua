@@ -1,9 +1,6 @@
 ---@class ns
 local ns = select(2, ...)
 
-local minBarDim = 5
-local maxBardim = 2000
-
 -- Suppress the 12.0 beta SetText(alpha) range error from AceConfig/Settings,
 do
     local oldHandler = geterrorhandler()
@@ -61,7 +58,7 @@ end
 local function Setter (info, val) 
     local argType = info[#info]
     ns.currentProfile.settings[argType] = val
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
 end
 
 local function Getter(info)
@@ -74,7 +71,7 @@ local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
     ns.currentProfile.settings[argType] = newColor
-    ns:UpdateBarSettings()
+    ns.barManager:UpdateBarSettings()
 end
 
 local function GetColor(info)
@@ -166,14 +163,16 @@ local options = {
                     name = "Move Bar",
                     func = function()
                         if ns.locked then 
-                            ns:UnlockBar()
+                            ns.barManager:UnlockBar()
                         else
-                            ns:LockBar()
-                            
+                            ns.barManager:LockBar()
                         end
                     end,
                     order = 10.5,
-                    width = 0.7
+                    width = 0.7,
+                    disabled = function()
+                        return not ns.currentProfile.settings.barEnabled
+                    end
 
                 },
                 offsetX = {
@@ -241,8 +240,8 @@ local options = {
                     name = "Bar Width",
                     set   = Setter,
                     get   = Getter,
-                    min = minBarDim,
-                    max = maxBardim,
+                    min = ns.minBarDim,
+                    max = ns.maxBardim,
                     step = 1,
                     order = 17,
                     width = "full"
@@ -252,8 +251,8 @@ local options = {
                     name = "Bar Height",
                     set   = Setter,
                     get   = Getter,
-                    min = minBarDim,
-                    max = maxBardim,
+                    min = ns.minBarDim,
+                    max = ns.maxBardim,
                     step = 1,
                     order = 18,
                     width = "full"

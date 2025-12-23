@@ -8,12 +8,12 @@ ns.currentProfile = nil
 ---@param event string
 ---@param args1 string
 local function HandleDB(self, event, args1)
+    
 	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
         if ProfileDB == nil or next(ProfileDB) == nil then
             ns:Say("Setting up defaults")
-            ProfileDB = {
-                default = ns.defaultProfile
-            }
+            ns:Dump(ns.profileManager)
+            ProfileDB = ns.profileManager.profiles
         end
 
         ns.profileManager.profiles = ProfileDB
@@ -27,16 +27,15 @@ local function HandleDB(self, event, args1)
         end
 
         ns.currentProfile = ns.profileManager.profiles[ProfileName]
-        ns:UpdateBarSettings()
     elseif event == ns.eventNames.PLAYER_LOGOUT or event == ns.eventNames.PLAYER_LEAVING_WORLD then
+        ns.profileManager:SaveCurrentProfile()
         ProfileName = ns.currentProfile.name
-        ns:SaveCurrentProfile()
         ProfileDB = ns.profileManager.profiles
     end
 end
 
-local loginFrame = CreateFrame("Frame", nil, UIParent)
-loginFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
-loginFrame:RegisterEvent(ns.eventNames.PLAYER_LOGOUT)
-loginFrame:RegisterEvent(ns.eventNames.PLAYER_LEAVING_WORLD)
-loginFrame:SetScript("OnEvent", HandleDB)
+local initFrame = CreateFrame("Frame", nil, UIParent)
+initFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
+initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGOUT)
+initFrame:RegisterEvent(ns.eventNames.PLAYER_LEAVING_WORLD)
+initFrame:SetScript("OnEvent", HandleDB)
