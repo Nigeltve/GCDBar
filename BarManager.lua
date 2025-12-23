@@ -145,11 +145,17 @@ function bm:GetSides(b)
     return b:GetLeft(), b:GetRight(), b:GetTop(), b:GetBottom()
 end
 
-function bm:GetCloseToEdgeFromBar(b)
+function bm:GetCursorPoint()
     local scale = bm.bar:GetEffectiveScale()
     local x, y = GetCursorPosition()
     x = x / scale
     y = y / scale
+
+    return x, y
+end
+
+function bm:GetCloseToEdgeFromBar(b)
+    local x, y = bm:GetCursorPoint()
 
     local left, right, top, bottom = bm:GetSides(b)
 
@@ -189,53 +195,59 @@ local function OnBarMouseUp()
     AceConfigRegistry:NotifyChange("GCDBar")
 end
 
-local function OnBarMouseDown(self, button)
-    if button ~= "LeftButton" then return end
+local function GetEdge(nearLeft, nearRight, nearTop, nearBottom)
+    if nearLeft and nearTop then return "TOPLEFT"
+    elseif nearLeft and nearBottom then return "BOTTOMLEFT"
+    elseif nearRight and nearTop then return "TOPRIGHT"
+    elseif nearRight and nearBottom then return "BOTTOMRIGHT"
+    elseif nearLeft then return "LEFT"
+    elseif nearRight then return "RIGHT"
+    elseif nearTop then return "TOP"
+    elseif nearBottom then return "BOTTOM"
+    end
+    return nil
+end
 
+local function GetResizeConfig(edge, left, right, top, bottom)
+    local configs = {
+        TOPLEFT = {"BOTTOMRIGHT", right, bottom},
+        BOTTOMLEFT = {"TOPRIGHT", right, top},
+        TOPRIGHT = {"BOTTOMLEFT", left, bottom},
+        BOTTOMRIGHT = {"TOPLEFT", left, top},
+        LEFT = {"TOPRIGHT", right, top},
+        RIGHT = {"TOPLEFT", left, top},
+        TOP = {"BOTTOMLEFT", left, bottom},
+        BOTTOM = {"TOPLEFT", left, top}
+    }
+    return configs[edge]
+end
+
+local function OnBarMouseDown(self, button)
+    print(button)
+     if button == "RightButton" then 
+        bm.bar:StartMoving()
+        return
+    end
+   
+    if button ~= "LeftButton" then return end
+   
     local left, right, top, bottom = bm:GetSides(bm.bar)
-    local nearLeft, nearRight, nearTop, nearBottom = bm:GetCloseToEdgeFromBar(bm.bar) 
+    local nearLeft, nearRight, nearTop, nearBottom = bm:GetCloseToEdgeFromBar(bm.bar)
     
     if nearLeft or nearRight or nearTop or nearBottom then
-        -- Resize mode
+        local edge = GetEdge(nearLeft, nearRight, nearTop, nearBottom)
+        if not edge then return end
+        
+        local config = GetResizeConfig(edge, left, right, top, bottom)
+        if not config then return end
+
+        ns.resizeEdge = edge
         bm.bar:SetResizable(true)
-    
-        if nearLeft and nearTop then
-            ns.resizeEdge = "TOPLEFT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMLEFT", right, bottom)
-        elseif nearLeft and nearBottom then
-            ns.resizeEdge = "BOTTOMLEFT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("TOPRIGHT", UIParent, "BOTTOMLEFT", right, top)
-        elseif nearRight and nearTop then
-            ns.resizeEdge = "TOPRIGHT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", left, bottom)
-        elseif nearRight and nearBottom then
-            ns.resizeEdge = "BOTTOMRIGHT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
-        elseif nearLeft then
-            ns.resizeEdge = "LEFT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("TOPRIGHT", UIParent, "BOTTOMLEFT", right, top)
-        elseif nearRight then
-            ns.resizeEdge = "RIGHT"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
-        elseif nearTop then
-            ns.resizeEdge = "TOP"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", left, bottom)
-        elseif nearBottom then
-            ns.resizeEdge = "BOTTOM"
-            bm.bar:ClearAllPoints()
-            bm.bar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
-        end
+        bm.bar:ClearAllPoints()
+        bm.bar:SetPoint(config[1], UIParent, "BOTTOMLEFT", config[2], config[3])
         bm.bar:StartSizing(ns.resizeEdge)
     else
-        -- Move mode (center area)
-       bm.bar:StartMoving()
+        bm.bar:StartMoving()
     end
 end
 

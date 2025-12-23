@@ -175,6 +175,15 @@ local options = {
                     end
 
                 },
+                spacer3 = CreateSpacer(10.6, 0.1),
+                isVertical = {
+                    type = "toggle",
+                    name = "Fill Vertical",
+                    desc  = "Sets the bar fill directions",
+                    set   = Setter,
+                    get   = Getter,
+                    order = 10.7
+                },
                 offsetX = {
                     type  = "range",
                     name  = "Horizontal Offset",
@@ -297,14 +306,6 @@ local options = {
                     order  = 22,
                     width  = "full",
                     style = "dropdown"
-                },
-                isVertical = {
-                    type = "toggle",
-                    name = "Fill Vertical",
-                    desc  = "Sets the bar fill directions",
-                    set   = Setter,
-                    get   = Getter,
-                    order = 23
                 }
             }
         },
