@@ -1,5 +1,5 @@
----@class ns
-local ns = select(2, ...)
+---@class Core
+local core = select(2, ...)
 
 local animTicker = nil
 local animStart = nil
@@ -24,15 +24,15 @@ local function StopAnimation()
 end
 
 local function UpdateFill()
-    if ns.currentProfile == nil or not ns.currentProfile.settings.barEnabled then
+    if core.currentProfile == nil or not core.currentProfile.settings.barEnabled then
         return
     end
 
-    if ns.barManager.bar == nil then
+    if core.barManager.bar == nil then
         return
     end
 
-    local bar = ns.barManager.bar
+    local bar = core.barManager.bar
 
     if not animStart or not animDuration or animDuration <= 0 then
         StopAnimation()
@@ -46,7 +46,7 @@ local function UpdateFill()
      then
         progress = 1
         StopAnimation()
-		if ns.currentProfile.settings.endFilled then
+		if core.currentProfile.settings.endFilled then
 			bar:SetValue(1)
 		else
 			bar:SetValue(0)
@@ -54,7 +54,7 @@ local function UpdateFill()
 		return;
     end
 
-	if ns.currentProfile.settings.fillReverse then
+	if core.currentProfile.settings.fillReverse then
 		bar:SetValue(1 - progress)
 	else
 		bar:SetValue(progress)
@@ -63,27 +63,27 @@ end
 
 local function HandleGcdAction(_, event)
 
-    if event == ns.eventNames.PLAYER_LOGIN then
-        if ns.currentProfile == nil then
-            ns:Log("Profile is null",ns.logTypes.WARNING)
+    if event == core.eventNames.PLAYER_LOGIN then
+        if core.currentProfile == nil then
+            core:Log("Profile is null",core.logTypes.WARNING)
             return
         end
 
-        if not ns.barManager.isSet then
-                ns:Log("Failed to set up bar",ns.logTypes.WARNING)
+        if not core.barManager.isSet then
+                core:Log("Failed to set up bar",core.logTypes.WARNING)
                 return
         end
 
-        ns.barManager.bar:SetScript("OnEvent", HandleGcdAction)
+        core.barManager.bar:SetScript("OnEvent", HandleGcdAction)
     end
 
-    if event ~= ns.eventNames.SPELLCAST_START and event ~= ns.eventNames.SPELLCAST_SUCCEEDED then
+    if event ~= core.eventNames.SPELLCAST_START and event ~= core.eventNames.SPELLCAST_SUCCEEDED then
         return
     end
  
-    local start, duration, _ = ReadSpellCooldown(ns.spellIds.GCD)
+    local start, duration, _ = ReadSpellCooldown(core.spellIds.GCD)
 
-    if ns.toc and string.find(ns.toc, "12") and not canaccessvalue(duration) then
+    if core.toc and string.find(core.toc, "12") and not canaccessvalue(duration) then
         StopAnimation()
         return
     end
@@ -98,5 +98,5 @@ local function HandleGcdAction(_, event)
 end
 
 local initFrame = CreateFrame("Frame", nil, UIParent)
-initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
+initFrame:RegisterEvent(core.eventNames.PLAYER_LOGIN)
 initFrame:SetScript("OnEvent", HandleGcdAction)

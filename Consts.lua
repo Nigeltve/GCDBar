@@ -1,17 +1,19 @@
----@class ns
-local ns = select(2, ...)
+---@class Core
+local core = select(2, ...)
 
-ns.debug = true
-ns.logLevel = 0
+core.debug = true
+core.logLevel = 0
 
-ns.logTypes = {
+core.logTypes = {
     INFO = "INFO",
     DEBUG = "DEBUG",
     WARNING = "WARNING",
     ERROR = "ERROR"
 }
 
-ns.eventNames = {
+
+---@enum eventNames
+core.eventNames = {
 	ADDON_LOADED = "ADDON_LOADED",
     PLAYER_LOGIN = "PLAYER_LOGIN",
 	PLAYER_LOGOUT = "PLAYER_LOGOUT",
@@ -24,11 +26,12 @@ ns.eventNames = {
     SPELLCAST_SENT = "UNIT_SPELLCAST_SENT"
 }
 
-ns.units = {
+---@enum Units 
+core.units = {
     PLAYER= "player"
 }
 
-ns.stratas = {
+core.stratas = {
     BACKGROUND = "BACKGROUND",
     LOW = "LOW",
     MEDIUM = "MEDIUM",
@@ -39,7 +42,7 @@ ns.stratas = {
     TOOLTIP = "TOOLTIP"
 }
 
-ns.cdbCommands = {
+core.cdbCommands = {
 	show = "show",
 	hide = "hide",
 	toggle = "toggle",
@@ -50,7 +53,7 @@ ns.cdbCommands = {
 	options = "options",
 }
 
-ns.cdpCommands = {
+core.cdpCommands = {
 	list = "list",
 	current = "current",
 	create = "create",
@@ -58,30 +61,30 @@ ns.cdpCommands = {
 	switch = "swap"
 }
 
-ns.barTextures = {
+core.barTextures = {
     Default = "Interface\\AddOns\\GCDBar\\Media\\Flat.tga",
 	BantoBar = "Interface\\AddOns\\GCDBar\\Media\\BantoBar.tga",
 }
 
-ns.barTextureChoices = {
+core.barTextureChoices = {
     Default = "Default",
     BantoBar = "BantoBar",
 }
 
-ns.outlinetextures = {
+core.outlinetextures = {
 	default = "Interface\\Buttons\\WHITE8X8"
 }
 
-ns.spellIds = {
+core.spellIds = {
 	GCD = 61304
 }
 
-ns.locked = true
+core.locked = true
 
-ns.minBarDim = 10
-ns.maxBardim = 2000
-ns.edgeThreshold = 7
-ns.resizeEdge = nil
+core.minBarDim = 10
+core.maxBardim = 2000
+core.edgeThreshold = 7
+core.resizeEdge = nil
 
 ---@class Settings
 ---@field barEnabled boolean
@@ -102,7 +105,7 @@ ns.resizeEdge = nil
 ---@field fillReverse boolean
 ---@field endFilled boolean
 ---@field isVertical boolean
-ns.defaultSettings = {
+core.defaultSettings = {
 	barEnabled = true,
 	offsetX = 0,
 	offsetY = -80,
@@ -113,11 +116,11 @@ ns.defaultSettings = {
 	forgroundColor =  { r = 1, g = 1, b = 1 , a = 1},
 	backgroundColor =  { r = 0.3, g = 0.3, b = 0.3 , a = 0.75},
 	boarderColor = { r = 0, g = 0, b = 0, a = 1 },
-	forgroundTexture = ns.barTextureChoices.Default,
-	backgroundTexture = ns.barTextureChoices.Default,
+	forgroundTexture = core.barTextureChoices.Default,
+	backgroundTexture = core.barTextureChoices.Default,
 	statusBarMin = 0,
 	statusBarmax = 1,
-	strata = ns.stratas.LOW,
+	strata = core.stratas.LOW,
 	fillReverse = false,
 	endFilled = true,
 	isVertical = false
@@ -129,7 +132,7 @@ ns.defaultSettings = {
 ---@class Profile
 ---@field name string
 ---@field settings Settings
-ns.defaultProfile = {
+core.defaultProfile = {
     name = "default",
-    settings = ns.defaultSettings,
+    settings = core.defaultSettings,
 }

@@ -1,5 +1,5 @@
----@class ns
-local ns = select(2, ...)
+---@class Core
+local core = select(2, ...)
 
 -- Suppress the 12.0 beta SetText(alpha) range error from AceConfig/Settings,
 do
@@ -21,7 +21,7 @@ end
 -- ---------------------------------------------------------------------------
 do
     local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
-    if AceGUI and AceGUI.WidgetRegistry and not ns._aceSetTextPatched then
+    if AceGUI and AceGUI.WidgetRegistry and not core._aceSetTextPatched then
         for _, widget in pairs(AceGUI.WidgetRegistry) do
             if type(widget) == "table" and type(widget.SetText) == "function" then
                 local orig = widget.SetText
@@ -33,7 +33,7 @@ do
                 end
             end
         end
-        ns._aceSetTextPatched = true
+        core._aceSetTextPatched = true
     end
 end
 
@@ -57,33 +57,33 @@ end
 
 local function Setter (info, val) 
     local argType = info[#info]
-    ns.currentProfile.settings[argType] = val
-    ns.barManager:UpdateBarSettings()
+    core.currentProfile.settings[argType] = val
+    core.barManager:UpdateBarSettings()
 end
 
 local function Getter(info)
     local argType = info[#info]
-    return ns.currentProfile.settings[argType]
+    return core.currentProfile.settings[argType]
 end
 
 -- Color --
 local function SetColor(info, red, green, blue, alpha)
     local argType = info[#info]
     local newColor = {r=red, g=green, b=blue, a=alpha}
-    ns.currentProfile.settings[argType] = newColor
-    ns.barManager:UpdateBarSettings()
+    core.currentProfile.settings[argType] = newColor
+    core.barManager:UpdateBarSettings()
 end
 
 local function GetColor(info)
     local argType = info[#info]
-    local color =  ns.currentProfile.settings[argType] or { r = 1, g = 1, b = 1 , a = 1}
+    local color =  core.currentProfile.settings[argType] or { r = 1, g = 1, b = 1 , a = 1}
     return color.r, color.g, color.b, color.a
 end
 
 local function IsboarderDisabled(info)
     local argType = info[#info]
     if argType == "boarderSize" or argType == "boarderColor" then
-        return not ns.currentProfile.settings.boarderEnabled
+        return not core.currentProfile.settings.boarderEnabled
     end
     return false
 end
@@ -105,7 +105,7 @@ local function ProfileGetter(info)
     local argType = info[#info]
     if argType == "profileNames" then
         if not profileToEdit then
-            profileToEdit = ns.profileManager:GetCurrentProfile().name
+            profileToEdit = core.profileManager:GetCurrentProfile().name
         end
         return profileToEdit
     end
@@ -162,16 +162,16 @@ local options = {
                     type = "execute",
                     name = "Move Bar",
                     func = function()
-                        if ns.locked then 
-                            ns.barManager:UnlockBar()
+                        if core.locked then 
+                            core.barManager:UnlockBar()
                         else
-                            ns.barManager:LockBar()
+                            core.barManager:LockBar()
                         end
                     end,
                     order = 10.5,
                     width = 0.7,
                     disabled = function()
-                        return not ns.currentProfile.settings.barEnabled
+                        return not core.currentProfile.settings.barEnabled
                     end
 
                 },
@@ -211,7 +211,7 @@ local options = {
                     name   = "Forground Texture",
                     set   = Setter,
                     get   = Getter,
-                    values = ns.barTextureChoices,
+                    values = core.barTextureChoices,
                     order  = 13,
                     width  = "full",
                     style = "dropdown"
@@ -221,7 +221,7 @@ local options = {
                     name   = "Background Texture",
                     set   = Setter,
                     get   = Getter,
-                    values = ns.barTextureChoices,
+                    values = core.barTextureChoices,
                     order  = 14,
                     width  = "full",
                     style = "dropdown"
@@ -249,8 +249,8 @@ local options = {
                     name = "Bar Width",
                     set   = Setter,
                     get   = Getter,
-                    min = ns.minBarDim,
-                    max = ns.maxBardim,
+                    min = core.minBarDim,
+                    max = core.maxBardim,
                     step = 1,
                     order = 17,
                     width = "full"
@@ -260,8 +260,8 @@ local options = {
                     name = "Bar Height",
                     set   = Setter,
                     get   = Getter,
-                    min = ns.minBarDim,
-                    max = ns.maxBardim,
+                    min = core.minBarDim,
+                    max = core.maxBardim,
                     step = 1,
                     order = 18,
                     width = "full"
@@ -302,7 +302,7 @@ local options = {
                     name   = "Bar Strata",
                     set   = Setter,
                     get   = Getter,
-                    values = ns.stratas,
+                    values = core.stratas,
                     order  = 22,
                     width  = "full",
                     style = "dropdown"
@@ -322,7 +322,7 @@ local options = {
                     set   = ProfileSetter,
                     get   = ProfileGetter,
                     values = function ()
-                        return ns.profileManager:GetListProfileNames()
+                        return core.profileManager:GetListProfileNames()
                     end,
                     order  = 31,
                     style = "dropdown",
@@ -337,7 +337,7 @@ local options = {
                             return
                         end
 
-                        ns.profileManager:SwapProfileTo(profileToEdit)
+                        core.profileManager:SwapProfileTo(profileToEdit)
                     end,
                     order = 32,
                     width = 0.7
@@ -352,8 +352,8 @@ local options = {
                             return
                         end
                     
-                        if ns.profileManager:DeleteProfile(profileToEdit) then
-                            profileToEdit = ns.profileManager:GetCurrentProfile().name
+                        if core.profileManager:DeleteProfile(profileToEdit) then
+                            profileToEdit = core.profileManager:GetCurrentProfile().name
                         end
                     end,
                     order = 33,
@@ -380,7 +380,7 @@ local options = {
                             return
                         end
                         
-                        local success = ns.profileManager:CreateNewProfile(newProfileName)
+                        local success = core.profileManager:CreateNewProfile(newProfileName)
                         if  not success then 
                             newProfileName = ""
                             return

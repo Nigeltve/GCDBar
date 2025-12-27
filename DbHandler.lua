@@ -1,41 +1,41 @@
----@class ns
-local ns = select(2, ...)
-ns.toc  = tostring(select(4, GetBuildInfo()))
+---@class Core
+local core = select(2, ...)
+core.toc  = tostring(select(4, GetBuildInfo()))
 
 ---@class Profile
-ns.currentProfile = nil
+core.currentProfile = nil
 
 ---@param event string
 ---@param args1 string
 local function HandleDB(self, event, args1)
     
-	if event == ns.eventNames.ADDON_LOADED and args1 == "GCDBar" then
+	if event == core.eventNames.ADDON_LOADED and args1 == "GCDBar" then
         if ProfileDB == nil or next(ProfileDB) == nil then
-            ns:Say("Setting up defaults")
-            ns:Dump(ns.profileManager)
-            ProfileDB = ns.profileManager.profiles
+            core:Say("Setting up defaults")
+            core:Dump(core.profileManager)
+            ProfileDB = core.profileManager.profiles
         end
 
-        ns.profileManager.profiles = ProfileDB
+        core.profileManager.profiles = ProfileDB
             
         if ProfileName == nil or ProfileName == "" then
             ProfileName = ProfileDB.default.name
         end
         
-        if ns.profileManager.profiles[ProfileName] == nil then
+        if core.profileManager.profiles[ProfileName] == nil then
              ProfileName = ProfileDB.default.name
         end
 
-        ns.currentProfile = ns.profileManager.profiles[ProfileName]
-    elseif event == ns.eventNames.PLAYER_LOGOUT or event == ns.eventNames.PLAYER_LEAVING_WORLD then
-        ns.profileManager:SaveCurrentProfile()
-        ProfileName = ns.currentProfile.name
-        ProfileDB = ns.profileManager.profiles
+        core.currentProfile = core.profileManager.profiles[ProfileName]
+    elseif event == core.eventNames.PLAYER_LOGOUT or event == core.eventNames.PLAYER_LEAVING_WORLD then
+        core.profileManager:SaveCurrentProfile()
+        ProfileName = core.currentProfile.name
+        ProfileDB = core.profileManager.profiles
     end
 end
 
 local initFrame = CreateFrame("Frame", nil, UIParent)
-initFrame:RegisterEvent(ns.eventNames.ADDON_LOADED)
-initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGOUT)
-initFrame:RegisterEvent(ns.eventNames.PLAYER_LEAVING_WORLD)
+initFrame:RegisterEvent(core.eventNames.ADDON_LOADED)
+initFrame:RegisterEvent(core.eventNames.PLAYER_LOGOUT)
+initFrame:RegisterEvent(core.eventNames.PLAYER_LEAVING_WORLD)
 initFrame:SetScript("OnEvent", HandleDB)

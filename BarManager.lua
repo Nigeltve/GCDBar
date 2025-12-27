@@ -1,5 +1,5 @@
----@class ns
-local ns = select(2, ...)
+---@class Core
+local core = select(2, ...)
 
 ---@class BarManager
 ---@field isSet boolean
@@ -11,12 +11,12 @@ local ns = select(2, ...)
 ---@field EHRight Texture
 ---@field EHTop Texture
 ---@field EHBottom Texture
-ns.barManager = {
+core.barManager = {
     isSet = false
 }
 
 ---@class BarManager
-local bm = ns.barManager
+local bm = core.barManager
 
 function bm:CreateBars()
     bm.bar = CreateFrame("StatusBar", nil, UIParent, UIParent)
@@ -27,31 +27,31 @@ function bm:CreateBars()
     bm.border = CreateFrame("Frame", nil, bm.bar, "BackdropTemplate")
     bm.backGround = CreateFrame("StatusBar" , nil, bm.bar)
 
-    bm.bar:RegisterEvent(ns.eventNames.PLAYER_ENTERING_WORLD)
-    bm.bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_START, ns.units.PLAYER)
-    bm.bar:RegisterUnitEvent(ns.eventNames.SPELLCAST_SUCCEEDED, ns.units.PLAYER)
+    bm.bar:RegisterEvent(core.eventNames.PLAYER_ENTERING_WORLD)
+    bm.bar:RegisterUnitEvent(core.eventNames.SPELLCAST_START, core.units.PLAYER)
+    bm.bar:RegisterUnitEvent(core.eventNames.SPELLCAST_SUCCEEDED, core.units.PLAYER)
 
     bm.EHLeft = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHLeft:SetColorTexture(1, 1, 1, 0.5)
-    bm.EHLeft:SetWidth(ns.edgeThreshold)
+    bm.EHLeft:SetWidth(core.edgeThreshold)
     bm.EHLeft:SetPoint("TOPLEFT", bm.bar, "TOPLEFT", 0, 0)
     bm.EHLeft:SetPoint("BOTTOMLEFT", bm.bar, "BOTTOMLEFT", 0, 0)
 
     bm.EHRight = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHRight:SetColorTexture(1, 1, 1, 0.5)
-    bm.EHRight:SetWidth(ns.edgeThreshold)
+    bm.EHRight:SetWidth(core.edgeThreshold)
     bm.EHRight:SetPoint("TOPRIGHT", bm.bar, "TOPRIGHT", 0, 0)
     bm.EHRight:SetPoint("BOTTOMRIGHT", bm.bar, "BOTTOMRIGHT", 0, 0)
 
     bm.EHTop = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHTop:SetColorTexture(1, 1, 1, 0.5)
-    bm.EHTop:SetHeight(ns.edgeThreshold)
+    bm.EHTop:SetHeight(core.edgeThreshold)
     bm.EHTop:SetPoint("TOPLEFT", bm.bar, "TOPLEFT", 0, 0)
     bm.EHTop:SetPoint("TOPRIGHT", bm.bar, "TOPRIGHT", 0, 0)
 
     bm.EHBottom = bm.bar:CreateTexture(nil, "OVERLAY")
     bm.EHBottom:SetColorTexture(1, 1, 1, 0.5)
-    bm.EHBottom:SetHeight(ns.edgeThreshold)
+    bm.EHBottom:SetHeight(core.edgeThreshold)
     bm.EHBottom:SetPoint("BOTTOMLEFT", bm.bar, "BOTTOMLEFT", 0, 0)
     bm.EHBottom:SetPoint("BOTTOMRIGHT", bm.bar, "BOTTOMRIGHT", 0, 0)
 
@@ -62,12 +62,12 @@ function bm:CreateBars()
 end
 
 function bm:UpdateBarSettings()
-	if not ns.currentProfile then
-		ns:Log("No Prfile to be found", ns.logTypes.ERROR)
+	if not core.currentProfile then
+		core:Log("No Prfile to be found", core.logTypes.ERROR)
 		return;
 	end
 
-    local profileSettings = ns.currentProfile.settings
+    local profileSettings = core.currentProfile.settings
     local frameLevel = 10
 
 
@@ -83,19 +83,19 @@ function bm:UpdateBarSettings()
     else
         bm.border:SetAllPoints(bm.bar)
         bm.border:SetBackdrop({
-            edgeFile = ns.outlinetextures.default,
+            edgeFile = core.outlinetextures.default,
             edgeSize = profileSettings.boarderSize,
         })
         bm.border:SetBackdropBorderColor(profileSettings.boarderColor.r, profileSettings.boarderColor.g, profileSettings.boarderColor.b, profileSettings.boarderColor.a)
-        bm.border:SetFrameStrata(ns.stratas[profileSettings.strata])
+        bm.border:SetFrameStrata(core.stratas[profileSettings.strata])
         bm.border:Show()
     end
 
     bm.bar:SetPoint("CENTER", profileSettings.offsetX, profileSettings.offsetY)
     bm.bar:SetSize(profileSettings.barWidth, profileSettings.barHeight)
-    bm.bar:SetFrameStrata(ns.stratas[profileSettings.strata])
+    bm.bar:SetFrameStrata(core.stratas[profileSettings.strata])
     bm.bar:SetFrameLevel(frameLevel)
-    bm.bar:SetStatusBarTexture(ns.barTextures[profileSettings.forgroundTexture])
+    bm.bar:SetStatusBarTexture(core.barTextures[profileSettings.forgroundTexture])
     bm.bar:SetStatusBarColor(profileSettings.forgroundColor.r, profileSettings.forgroundColor.g, profileSettings.forgroundColor.b, profileSettings.forgroundColor.a)
     bm.bar:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
     
@@ -111,9 +111,9 @@ function bm:UpdateBarSettings()
 
     bm.backGround:SetPoint("CENTER")
     bm.backGround:SetSize(profileSettings.barWidth, profileSettings.barHeight)
-    bm.backGround:SetFrameStrata(ns.stratas[profileSettings.strata])
+    bm.backGround:SetFrameStrata(core.stratas[profileSettings.strata])
     bm.backGround:SetFrameLevel(bm.bar:GetFrameLevel() - 1)
-    bm.backGround:SetStatusBarTexture(ns.barTextures[profileSettings.backgroundTexture])
+    bm.backGround:SetStatusBarTexture(core.barTextures[profileSettings.backgroundTexture])
     bm.backGround:SetStatusBarColor(profileSettings.backgroundColor.r, profileSettings.backgroundColor.g, profileSettings.backgroundColor.b, profileSettings.backgroundColor.a)
     bm.backGround:SetMinMaxValues(profileSettings.statusBarMin, profileSettings.statusBarmax)
 end
@@ -163,10 +163,10 @@ function bm:GetCloseToEdgeFromBar(b)
         return false, false, false, false
     end
 
-    local nearLeft = (x - left) < ns.edgeThreshold
-    local nearRight = (right - x) < ns.edgeThreshold
-    local nearTop = (top - y) < ns.edgeThreshold
-    local nearBottom = (y - bottom) < ns.edgeThreshold
+    local nearLeft = (x - left) < core.edgeThreshold
+    local nearRight = (right - x) < core.edgeThreshold
+    local nearTop = (top - y) < core.edgeThreshold
+    local nearBottom = (y - bottom) < core.edgeThreshold
 
     return nearLeft, nearRight, nearTop, nearBottom
 end
@@ -181,14 +181,14 @@ local function OnBarMouseUp()
     bm.bar:StopMovingOrSizing()
 
     local _, _, _, offsetX, offsetY = bm.bar:GetPoint()
-    ns.currentProfile.settings.offsetX = offsetX
-    ns.currentProfile.settings.offsetY = offsetY
+    core.currentProfile.settings.offsetX = offsetX
+    core.currentProfile.settings.offsetY = offsetY
 
-    ns.currentProfile.settings.barWidth = bm.bar:GetWidth()
-    ns.currentProfile.settings.barHeight =  bm.bar:GetHeight()
+    core.currentProfile.settings.barWidth = bm.bar:GetWidth()
+    core.currentProfile.settings.barHeight =  bm.bar:GetHeight()
 
-    ns.resizeEdge = nil
-    ns.startPoint = nil
+    core.resizeEdge = nil
+    core.startPoint = nil
 
     bm:UpdateBarSettings()
     local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
@@ -241,11 +241,11 @@ local function OnBarMouseDown(self, button)
         local config = GetResizeConfig(edge, left, right, top, bottom)
         if not config then return end
 
-        ns.resizeEdge = edge
+        core.resizeEdge = edge
         bm.bar:SetResizable(true)
         bm.bar:ClearAllPoints()
         bm.bar:SetPoint(config[1], UIParent, "BOTTOMLEFT", config[2], config[3])
-        bm.bar:StartSizing(ns.resizeEdge)
+        bm.bar:StartSizing(core.resizeEdge)
     else
         bm.bar:StartMoving()
     end
@@ -253,20 +253,20 @@ end
 
 function bm:UnlockBar()
     if not bm.bar then
-        ns:Say("Bar was not initialised")
+        core:Say("Bar was not initialised")
         return
     end
 
-    if not ns.currentProfile.settings.barEnabled then
+    if not core.currentProfile.settings.barEnabled then
         return
     end
 
     local bar = bm.bar
     local unlockText = bm.unlockText
 
-    ns:Say("Unlocked")
+    core:Say("Unlocked")
 
-    ns.locked = false
+    core.locked = false
 
     unlockText:SetText("Unlocked")
 
@@ -274,7 +274,7 @@ function bm:UnlockBar()
     bar:SetMovable(true)
 
     bar:SetResizable(true)
-    bar:SetResizeBounds(ns.minBarDim, ns.minBarDim, ns.maxBardim, ns.maxBardim)
+    bar:SetResizeBounds(core.minBarDim, core.minBarDim, core.maxBardim, core.maxBardim)
     bar:SetScript("OnMouseDown", OnBarMouseDown)
     bar:SetScript("OnMouseUp", OnBarMouseUp)
     bar:SetScript("OnUpdate", OnBarUpdate)
@@ -282,22 +282,22 @@ end
 
 function bm:LockBar()
     if not bm.bar then
-        ns:Say("Bar was not initialised")
+        core:Say("Bar was not initialised")
         return
     end
 
-    if not ns.currentProfile.settings.barEnabled then
+    if not core.currentProfile.settings.barEnabled then
         return
     end
 
     local bar = bm.bar
     local unlockText = bm.unlockText
 
-    ns:Say("Locked")
+    core:Say("Locked")
 
     unlockText:SetText("")
 
-    ns.locked = true
+    core.locked = true
 
     bar:EnableMouse(false)
     bar:SetResizable(false)
@@ -310,12 +310,12 @@ end
 
 ---@param event string
 local function HandleBarCreation(self, event, ...)
-    if event ~= ns.eventNames.PLAYER_LOGIN then return end
+    if event ~= core.eventNames.PLAYER_LOGIN then return end
 
-    ns:Log("Creating Bars", ns.logTypes.DEBUG)
+    core:Log("Creating Bars", core.logTypes.DEBUG)
     bm:CreateBars()
 end
 
 local initFrame = CreateFrame("Frame", nil, UIParent)
-initFrame:RegisterEvent(ns.eventNames.PLAYER_LOGIN)
+initFrame:RegisterEvent(core.eventNames.PLAYER_LOGIN)
 initFrame:SetScript("OnEvent", HandleBarCreation)
