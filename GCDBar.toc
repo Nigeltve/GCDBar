@@ -8,11 +8,12 @@
 ## IconTexture: Interface\AddOns\GCDBar\Media\icon.tga
 
 embeds.xml
-Consts.lua
+Definitions.lua	
+Enums.lua
 Utils.lua
+Logger.lua
 ProfileManager.lua
-DbHandler.lua
 BarManager.lua
-GcdEventHandler.lua
+Core.lua
 Commands.lua
 Options.lua
