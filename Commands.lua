@@ -49,8 +49,7 @@ function SlashCmdList.GCDBAR(msg, _)
 	end
 
 	if cmd == core.enums.commands.reset then
-		core.profileManager.currentProfile.settings = CopyTable(core.profileManager.defaultProfile)
-		core.barManager:UpdateSettings(core.profileManager.currentProfile.settings)
+		core.profileManager:ResetCurrentProfile()
 		return
 	end
 
@@ -92,6 +91,13 @@ function SlashCmdList.GCDBAR(msg, _)
 		return
 	end
 
+	if cmd == core.enums.commands.clearAll then
+		core.logger:LogDebug("Attempting to clear all")
+		local res = core.profileManager:ClearAllProfiles()
+		core.logger:LogDebug("Cleared Status: " .. tostring(res))
+		return
+	end
+
 	if cmd == nil or cmd == core.enums.commands.help then
 		core.logger:Say("CDBar Commands")
 		core.logger:Say("/cdb help – Display Help Commands")
@@ -103,6 +109,8 @@ function SlashCmdList.GCDBAR(msg, _)
 		core.logger:Say("/cdb create {name} – creates a new profile and swaped with provided name")
 		core.logger:Say("/cdb delete {name} – deletes profile with provided name")
 		core.logger:Say("/cdb swap {name} – switches to profile with provided name")
+		core.logger:Say("/cdb reset – Resets the current profile")
+		core.logger:Say("/cdb clearAll – Removed All profiles and resets the default to its default state")
 		return
 	end
 end

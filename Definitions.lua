@@ -2,7 +2,7 @@
 ---@field config BarConfig
 ---@field state BarState
 ---@field visual BarVisuals
----@field UpdateSettings fun(self: BarManager, settings: Settingss)
+---@field UpdateSettings fun(self: BarManager, settings: Settings)
 ---@field LockBar fun(self: BarManager)
 ---@field UnlockBar fun(self: BarManager)
 ---@field Create fun(self: BarManager)
@@ -62,13 +62,15 @@
 ---@field SwapToProfile fun(self: ProfileManager, name: string): swapped: boolean
 ---@field DeleteProfile fun(self: ProfileManager, name: string): deleted: boolean
 ---@field SaveProfile fun(self: ProfileManager): saved: boolean
+---@field ClearAllProfiles fun(self: ProfileManager): cleared: boolean
+---@field ResetCurrentProfile fun(self: ProfileManager): reset: boolean
 ---@field GetCurrentProfile fun(self: ProfileManager): currentProfile: Profile
 ---@field ProfileExists fun(self: ProfileManager, name: string): exists: boolean
 ---@field ValidateName fun(self: ProfileManager, name: string): isValid: boolean
 
 ---@class Profile: table
 ---@field name string
----@field settings Settingss
+---@field settings Settings
 
 ---@class Color : table
 ---@field R number
@@ -76,7 +78,7 @@
 ---@field B number
 ---@field A number
 
----@class Settingss : table
+---@class Settings : table
 ---@field barEnabled boolean
 ---@field reverseFill boolean
 ---@field endFilled boolean
@@ -97,7 +99,7 @@
 ---@class Utils: table
 ---@field IsMidNight fun(self: Utils): isMidNight: boolean
 ---@field ReadSpellCooldown fun(self: Utils, spellId: number): startTime: number, duration: number, modRate: number
----@field Dump fun(self: Utils, tbl: table)
+---@field UpdateOptions fun(self: Utils)
 
 ---@class Logger: table
 ---@field canDebug boolean
@@ -107,6 +109,7 @@
 ---@field LogDebug fun(self: Logger, msg: string)
 ---@field LogWarning fun(self: Logger, msg: string)
 ---@field LogError fun(self: Logger, msg: string)
+---@field Dump fun(self: Utils, tbl: table)
 
 ---@class Enums: table
 ---@field units Units
@@ -170,6 +173,7 @@
 ---@field create string
 ---@field delete string
 ---@field switch string
+---@field clearAll string
 ---@field options string
 ---@field help string
 

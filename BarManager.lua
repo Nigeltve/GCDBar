@@ -95,12 +95,12 @@ core.barManager = {
 
 	UpdateSettings = function(self, settings)
 		if not settings or settings == nil then
-			core.logger:LogWarning("No Prfile to be found")
+			core.logger:LogError("Settings nil")
 			return;
 		end
 
 		if not self.state.initialized then
-			core.logger:LogWarning("Is not initialized")
+			core.logger:LogError("Is not initialized")
 			return
 		end
 
@@ -137,7 +137,8 @@ core.barManager = {
 			border:Show()
 		end
 
-		fgBar:SetPoint("CENTER", settings.offSetX, settings.offSetY)
+		fgBar:ClearAllPoints()
+		fgBar:SetPoint("CENTER", UIParent, "CENTER", settings.offSetX, settings.offSetY)
 		fgBar:SetSize(settings.barWidth, settings.barHeight)
 		fgBar:SetFrameStrata(strata)
 		fgBar:SetFrameLevel(frameLevel)
@@ -325,7 +326,10 @@ core.barManager = {
 		local bar = self.visual.fgBar
 		local profile = core.profileManager.currentProfile
 
-		if profile == nil then return end
+		if profile == nil then
+			core.logger:LogError("No Profile is set")
+			return
+		end
 
 		bar:StopMovingOrSizing()
 
@@ -333,14 +337,19 @@ core.barManager = {
 		profile.settings.offSetX = offsetX
 		profile.settings.offSetY = offsetY
 
+		core.logger:LogDebug("bar OffSetX: " ..
+			tostring(offsetX) .. " profile OffsetX: " .. tostring(profile.settings.offSetX))
+
+		core.logger:LogDebug("bar OffSetY: " ..
+			tostring(offsetY) .. " profile OffsetY: " .. tostring(profile.settings.offSetY))
+
 		profile.settings.barWidth = bar:GetWidth()
 		profile.settings.barHeight = bar:GetHeight()
 
 		self.state.resizeEdge = nil
 
 		self:UpdateSettings(profile.settings)
-		local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
-		AceConfigRegistry:NotifyChange("GCDBar")
+		core.utils:UpdateOptions()
 	end,
 
 	OnMouseDown = function(self, button)

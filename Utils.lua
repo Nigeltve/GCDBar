@@ -2,14 +2,6 @@
 local core = select(2, ...)
 
 core.utils = {
-	Dump = function(self, tbl)
-		if tbl == nil then
-			print("Table is nil")
-			return
-		end
-		DevTools_Dump(tbl)
-	end,
-
 	IsMidNight = function()
 		local toc = tostring(select(4, GetBuildInfo()))
 		return string.find(toc, "12") ~= nil
@@ -20,5 +12,10 @@ core.utils = {
 
 		local info = C_Spell.GetSpellCooldown(spellId)
 		return info.startTime, info.duration, info.modRate
+	end,
+
+	UpdateOptions = function(self)
+		local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+		AceConfigRegistry:NotifyChange("GCDBar")
 	end
 }

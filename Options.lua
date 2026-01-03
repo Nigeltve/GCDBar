@@ -68,7 +68,7 @@ local function ProfileGetter(info)
 	local argType = info[#info]
 	if argType == "profileNames" then
 		if not profileToEdit then
-			profileToEdit = core.profileManager:GetCurrentProfile().name
+			profileToEdit = core.profileManager:GetCurrentProfile().name or core.profileManager.defaultProfile.name
 		end
 		return profileToEdit
 	end
@@ -285,7 +285,8 @@ local options = {
 					set    = ProfileSetter,
 					get    = ProfileGetter,
 					values = function()
-						return core.profileManager:GetProfileNames()
+						local profileNames = core.profileManager:GetProfileNames()
+						return profileNames
 					end,
 					order  = 31,
 					style  = "dropdown",
@@ -382,7 +383,10 @@ Slash commands:
 /cdb current        – Lists out the current profile name
 /cdb create {name}  – creates a new profile and swaped with provided name
 /cdb delete {name}  – deletes profile with provided name
-/cdb swap {name}    – switches to profile with provided name]],
+/cdb swap {name}    – switches to profile with provided name
+/cdb reset          – Resets the current profile
+/cdb clearAll.      – Removed All profiles and resets the default to its default state
+]],
 					order = 10,
 				},
 			},

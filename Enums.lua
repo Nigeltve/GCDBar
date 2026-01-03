@@ -44,6 +44,7 @@ core.enums.commands = {
 	create = "create",
 	delete = "delete",
 	switch = "swap",
+	clearAll = "clearall",
 	options = "options",
 	help = "help",
 }

@@ -3,9 +3,9 @@ local core = select(2, ...)
 
 ---@type ProfileManager
 core.profileManager = {
-	profiles          = {},
-	currentProfile    = nil,
-	defaultProfile    = {
+	profiles            = {},
+	currentProfile      = nil,
+	defaultProfile      = {
 		name = "default",
 		settings = {
 			barEnabled = true,
@@ -27,23 +27,23 @@ core.profileManager = {
 		}
 	},
 
-	Setup             = function(self, profiles)
+	Setup               = function(self, profiles)
 		if next(self.profiles) == nil then
-			self.profiles["default"] = self.defaultProfile
+			self.profiles["default"] = CopyTable(self.defaultProfile)
 		end
 
 		for _, p in pairs(profiles) do
-			self.profiles[p.name] = p
+			self.profiles[p.name] = CopyTable(p)
 		end
 	end,
 
-	PrintProfileNames = function(self)
+	PrintProfileNames   = function(self)
 		for _, v in pairs(self.profiles) do
 			core.logger:Say(v.name)
 		end
 	end,
 
-	GetProfileNames   = function(self)
+	GetProfileNames     = function(self)
 		local profiles = {}
 		for k, v in pairs(self.profiles) do
 			profiles[k] = k
@@ -51,7 +51,7 @@ core.profileManager = {
 		return profiles
 	end,
 
-	CreateProfile     = function(self, name)
+	CreateProfile       = function(self, name)
 		if string.len(name) <= 0 then
 			core.logger:Say("Cannot create a profile with no name")
 			return false
@@ -76,7 +76,7 @@ core.profileManager = {
 		return true
 	end,
 
-	DeleteProfile     = function(self, name)
+	DeleteProfile       = function(self, name)
 		local currentProfile = self:GetCurrentProfile()
 
 		if currentProfile.name == name then
@@ -94,7 +94,7 @@ core.profileManager = {
 		return true
 	end,
 
-	SwapToProfile     = function(self, name)
+	SwapToProfile       = function(self, name)
 		local profile = self:GetCurrentProfile()
 		if profile.name == name then
 			core.logger:Say("Profile already active")
@@ -109,25 +109,27 @@ core.profileManager = {
 		self:SaveProfile()
 		core.profileManager.currentProfile = self.profiles[name]
 		core.barManager:UpdateSettings(core.profileManager.currentProfile.settings)
+		core.utils:UpdateOptions()
 		core.logger:Say("Swapped Profile: " .. name)
+
 		return true
 	end,
 
-	ProfileExists     = function(self, name)
+	ProfileExists       = function(self, name)
 		local nextProfile = self.profiles[name]
 		return nextProfile ~= nil and next(nextProfile) ~= nil
 	end,
 
-	GetCurrentProfile = function(self)
+	GetCurrentProfile   = function(self)
 		return core.profileManager.currentProfile
 	end,
 
-	ValidateName      = function(self, name)
+	ValidateName        = function(self, name)
 		local regex = "^[a-zA-Z0-9_]+$"
 		return string.match(name, regex) and #name >= 4
 	end,
 
-	SaveProfile       = function(self)
+	SaveProfile         = function(self)
 		for _, profile in pairs(self.profiles) do
 			if profile.name == self.currentProfile.name then
 				profile = self.currentProfile
@@ -136,5 +138,32 @@ core.profileManager = {
 		end
 
 		return false
+	end,
+
+	ClearAllProfiles    = function(self)
+		for name, _ in pairs(self.profiles) do
+			core.logger:LogDebug("Looking at profile: " .. tostring(name))
+			if name ~= self.defaultProfile.name then
+				core.logger:LogDebug("profile is not " .. tostring(self.defaultProfile.name))
+				self.profiles[name] = nil
+			end
+		end
+
+		local swapStatus = self:SwapToProfile(self.defaultProfile.name)
+		local resetStatus = self:ResetCurrentProfile()
+
+		core.logger:LogDebug("SwapStatus: " .. tostring(swapStatus))
+		core.logger:LogDebug("resetStatus: " .. tostring(resetStatus))
+
+		ReloadUI()
+		core.utils:UpdateOptions()
+		return true
+	end,
+
+	ResetCurrentProfile = function(self)
+		core.profileManager.currentProfile.settings = CopyTable(core.profileManager.defaultProfile.settings)
+		core.barManager:UpdateSettings(core.profileManager.currentProfile.settings)
+		core.utils:UpdateOptions()
+		return true
 	end
 }

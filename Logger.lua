@@ -37,4 +37,11 @@ core.logger = {
 		end
 		print("|cffff3737 GCDBar Error:|r " .. tostring(msg))
 	end,
+	Dump = function(self, tbl)
+		if tbl == nil then
+			print("Table is nil")
+			return
+		end
+		DevTools_Dump(tbl)
+	end
 }

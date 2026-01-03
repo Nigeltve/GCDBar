@@ -1,6 +1,12 @@
 ---@type Core
 local core = select(2, ...)
 
+---@type Profile[]?
+ProfileDB = ProfileDB
+
+---@type string?
+ProfileName = ProfileName
+
 ---@param event string
 ---@param args1 string
 local function HandleEvents(_, event, args1)
@@ -9,7 +15,7 @@ local function HandleEvents(_, event, args1)
 
 		if ProfileDB == nil or next(ProfileDB) == nil then
 			core.logger:Say("Setting up defaults")
-			core.profileManager:Setup({ default = core.profileManager.defaultProfile })
+			core.profileManager:Setup({})
 		else
 			core.logger:LogDebug("Already saved")
 			core.profileManager:Setup(ProfileDB)
@@ -26,6 +32,7 @@ local function HandleEvents(_, event, args1)
 		core.profileManager.currentProfile = core.profileManager.profiles[ProfileName]
 		core.barManager:Create()
 	elseif event == core.enums.events.PLAYER_LOGOUT or event == core.enums.events.PLAYER_LEAVING_WORLD then
+		core.profileManager:SaveProfile()
 		ProfileName = core.profileManager.currentProfile.name
 		ProfileDB = core.profileManager.profiles
 	elseif event == core.enums.events.SPELLCAST_START or event == core.enums.events.SPELLCAST_SUCCEEDED then
