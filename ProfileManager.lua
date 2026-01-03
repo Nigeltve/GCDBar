@@ -12,7 +12,7 @@ core.profileManager = {
 			offSetX = 0,
 			offSetY = -80,
 			barWidth = 144,
-			barHeight = 17,
+			barHeight = 30,
 			borderSize = 2,
 			borderEnabled = true,
 			fgBarColor = { R = 1, G = 1, B = 1, A = 1 },
