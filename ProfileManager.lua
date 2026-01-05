@@ -9,6 +9,7 @@ core.profileManager = {
 		name = "default",
 		settings = {
 			barEnabled = true,
+			anchorPoint = "CENTER",
 			offSetX = 0,
 			offSetY = -80,
 			barWidth = 144,
@@ -142,18 +143,13 @@ core.profileManager = {
 
 	ClearAllProfiles    = function(self)
 		for name, _ in pairs(self.profiles) do
-			core.logger:LogDebug("Looking at profile: " .. tostring(name))
 			if name ~= self.defaultProfile.name then
-				core.logger:LogDebug("profile is not " .. tostring(self.defaultProfile.name))
 				self.profiles[name] = nil
 			end
 		end
 
-		local swapStatus = self:SwapToProfile(self.defaultProfile.name)
-		local resetStatus = self:ResetCurrentProfile()
-
-		core.logger:LogDebug("SwapStatus: " .. tostring(swapStatus))
-		core.logger:LogDebug("resetStatus: " .. tostring(resetStatus))
+		self:SwapToProfile(self.defaultProfile.name)
+		self:ResetCurrentProfile()
 
 		ReloadUI()
 		core.utils:UpdateOptions()

@@ -83,6 +83,7 @@
 ---@field reverseFill boolean
 ---@field endFilled boolean
 ---@field fillVertical boolean
+---@field anchorPoint FramePoint
 ---@field offSetX number
 ---@field offSetY number
 ---@field barWidth number

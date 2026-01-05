@@ -92,9 +92,7 @@ function SlashCmdList.GCDBAR(msg, _)
 	end
 
 	if cmd == core.enums.commands.clearAll then
-		core.logger:LogDebug("Attempting to clear all")
-		local res = core.profileManager:ClearAllProfiles()
-		core.logger:LogDebug("Cleared Status: " .. tostring(res))
+		core.profileManager:ClearAllProfiles()
 		return
 	end
 

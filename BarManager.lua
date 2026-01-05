@@ -82,15 +82,12 @@ core.barManager = {
 		self.state.initialized = true
 
 		if core.profileManager.currentProfile or next(core.profileManager.currentProfile) == nil then
-			core.logger:LogDebug("Initial Update")
 			self:UpdateSettings(core.profileManager.currentProfile.settings)
 		else
 			core.logger:LogWarning("Coult not update bar on initilisation due to profile not existing")
 		end
 
 		self:HideHighLightedEdges()
-
-		core.logger:LogDebug("Finished Creating Bars")
 	end,
 
 	UpdateSettings = function(self, settings)
@@ -103,8 +100,6 @@ core.barManager = {
 			core.logger:LogError("Settings nil")
 			return;
 		end
-
-		core.logger:LogDebug("Updating bar")
 
 		local fgBar = self.visual.fgBar
 		local bgBar = self.visual.bgBar
@@ -138,7 +133,7 @@ core.barManager = {
 		end
 
 		fgBar:ClearAllPoints()
-		fgBar:SetPoint("CENTER", settings.offSetX, settings.offSetY)
+		fgBar:SetPoint(settings.anchorPoint, nil, settings.anchorPoint, settings.offSetX, settings.offSetY)
 		fgBar:SetSize(settings.barWidth, settings.barHeight)
 		fgBar:SetFrameStrata(strata)
 		fgBar:SetFrameLevel(frameLevel)
@@ -176,8 +171,6 @@ core.barManager = {
 			return
 		end
 
-		core.logger:LogDebug("Locking Bar")
-
 		local bar = self.visual.fgBar
 		local unlockText = self.visual.text
 
@@ -206,8 +199,6 @@ core.barManager = {
 			core.logger:LogWarning("Bar is disabled")
 			return
 		end
-
-		core.logger:LogDebug("Unlocking bar")
 
 		local bar = self.visual.fgBar
 		local unlockText = self.visual.text
@@ -315,7 +306,6 @@ core.barManager = {
 	end,
 
 	OnMouseUp = function(self)
-		core.logger:LogDebug("MouseUp")
 		if not self.state.initialized then
 			core.logger:LogWarning("Is not initialized")
 			return
@@ -336,13 +326,22 @@ core.barManager = {
 
 		bar:StopMovingOrSizing()
 
-		local _, _, _, offsetX, offsetY = bar:GetPoint()
+		local width = bar:GetWidth()
+		local height = bar:GetHeight()
 
+		local screenCenterX = GetScreenWidth() / 2
+		local screenCenterY = GetScreenHeight() / 2
+
+		local barCenterX, barCenterY = bar:GetCenter()
+
+		local offsetX = barCenterX - screenCenterX
+		local offsetY = barCenterY - screenCenterY
+
+		profile.settings.anchorPoint = "CENTER"
 		profile.settings.offSetX = offsetX
 		profile.settings.offSetY = offsetY
-
-		profile.settings.barWidth = bar:GetWidth()
-		profile.settings.barHeight = bar:GetHeight()
+		profile.settings.barWidth = width
+		profile.settings.barHeight = height
 
 		if self.state.resizeEdge ~= nil then
 			self.state.resizeEdge = nil
@@ -352,8 +351,6 @@ core.barManager = {
 	end,
 
 	OnMouseDown = function(self, button)
-		core.logger:LogDebug("MouseDown")
-
 		if not self.state.initialized then
 			core.logger:LogWarning("Is not initialized")
 			return
@@ -361,14 +358,11 @@ core.barManager = {
 
 		local bar = self.visual.fgBar
 		if button == "RightButton" then
-			core.logger:LogDebug("Clicked Right")
 			bar:StartMoving()
 			return
 		end
 
 		if button ~= "LeftButton" then return end
-
-		core.logger:LogDebug("Clicked Left")
 
 		local left = bar:GetLeft()
 		local right = bar:GetRight()
@@ -378,13 +372,11 @@ core.barManager = {
 		local edge = self:GetCursorEdgeProximity()
 
 		if edge.middle then
-			core.logger:LogDebug("Middle")
 			bar:StartMoving()
 			return
 		end
 
 		if edge.left or edge.right or edge.top or edge.bottom then
-			core.logger:LogDebug("BarEdge")
 			local resizeEdge = self:GetAnchorPoint(edge)
 			if not resizeEdge then return end
 

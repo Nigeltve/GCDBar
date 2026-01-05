@@ -11,13 +11,9 @@ ProfileName = ProfileName
 ---@param args1 string
 local function HandleEvents(_, event, args1)
 	if event == core.enums.events.ADDON_LOADED and args1 == "GCDBar" then
-		core.logger:LogDebug("Starting GCDbar")
-
 		if ProfileDB == nil or next(ProfileDB) == nil then
-			core.logger:Say("Setting up defaults")
 			core.profileManager:Setup({})
 		else
-			core.logger:LogDebug("Already saved")
 			core.profileManager:Setup(ProfileDB)
 		end
 
