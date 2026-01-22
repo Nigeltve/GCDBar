@@ -4,7 +4,7 @@ local core = select(2, ...)
 core.barManager = {
 	config = {
 		barDimMax = 2000,
-		barDimMin = 15,
+		barDimMin = 3,
 		barFillMin = 0,
 		barFillMax = 1,
 		edgeSize = 7
@@ -454,7 +454,7 @@ core.barManager = {
 
 			self.state.animStart = start
 			self.state.animDuration = duration
-			self.state.animTicker = C_Timer.NewTicker(0.016, function() self:UpdateFill() end)
+			self.state.animTicker = C_Timer.NewTicker(0.005, function() self:UpdateFill() end)
 		end
 	end,
 
