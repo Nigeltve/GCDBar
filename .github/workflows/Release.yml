@@ -1,0 +1,50 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write # Required to create releases
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set version
+        id: version
+        run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+      
+      - name: Create addon zip
+        run: |
+          # Create a temporary directory with the addon name
+          mkdir -p GCDBar
+          
+          # Copy all files except .git and .github to the temp directory
+          rsync -av --exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='GCDBar' ./ GCDBar/
+          
+          # Create a zip file containing the folder
+          zip -r GCDBar.zip GCDBar/
+          
+          # Clean up temp directory
+          rm -rf GCDBar
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: GCDBar.zip
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: Release v${{ steps.version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
