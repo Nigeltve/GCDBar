@@ -1,8 +1,8 @@
-## Interface: 110207, 120000
+## Interface: 120000, 120001
 ## Title: GCD Bar
 ## Author: Flowlin
 ## Notes: Display a GCD as a bar
-## Version: 0.0.1
+## Version: 1.0.2
 ## SavedVariables: ProfileDB
 ## SavedVariablesPerCharacter: ProfileName
 ## IconTexture: Interface\AddOns\GCDBar\Media\icon.tga
