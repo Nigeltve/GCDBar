@@ -13,7 +13,8 @@ core.barManager = {
 		locked = true,
 		initialized = false,
 		resizeEdge = nil,
-		animTicker = nil,
+		animGroup = nil,
+		animDummy = nil,
 		animStart = nil,
 		animDuration = nil,
 	},
@@ -26,6 +27,7 @@ core.barManager = {
 		ehLeft = nil,
 		ehTop = nil,
 		ehBottom = nil,
+		animFrame = nil,
 	},
 
 	Create = function(self)
@@ -79,6 +81,27 @@ core.barManager = {
 		self.visual.ehRight = EHRight
 		self.visual.ehTop = EHTop
 		self.visual.ehBottom = EHBottom
+
+		local animFrame = CreateFrame("Frame")
+		local ag = animFrame:CreateAnimationGroup()
+		ag:SetLooping("NONE")
+		local animDummy = ag:CreateAnimation()
+
+		ag:SetScript("OnUpdate", function() self:UpdateFill() end)
+		ag:SetScript("OnFinished", function()
+			local settings = core.profileManager.currentProfile.settings
+			if settings.endFilled then
+				self.visual.fgBar:SetValue(1)
+			else
+				self.visual.fgBar:SetValue(0)
+			end
+			self.state.animStart = nil
+			self.state.animDuration = nil
+		end)
+
+		self.visual.animFrame = animFrame
+		self.state.animGroup = ag
+		self.state.animDummy = animDummy
 		self.state.initialized = true
 
 		if core.profileManager.currentProfile or next(core.profileManager.currentProfile) == nil then
@@ -454,7 +477,11 @@ core.barManager = {
 
 			self.state.animStart = start
 			self.state.animDuration = duration
-			self.state.animTicker = C_Timer.NewTicker(0.005, function() self:UpdateFill() end)
+
+			local elapsed = GetTime() - start
+			local remaining = math.max(0.001, duration - elapsed)
+			self.state.animDummy:SetDuration(remaining)
+			self.state.animGroup:Play()
 		end
 	end,
 
@@ -464,12 +491,12 @@ core.barManager = {
 			return
 		end
 
-		if not self.state.animTicker then
-			return
+		if not self.state.animStart then return end
+
+		if self.state.animGroup:IsPlaying() then
+			self.state.animGroup:Stop()
 		end
 
-		self.state.animTicker:Cancel()
-		self.state.animTicker = nil
 		self.state.animStart = nil
 		self.state.animDuration = nil
 	end,

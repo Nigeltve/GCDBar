@@ -25,7 +25,8 @@
 ---@field resizeEdge string
 ---@field animStart number
 ---@field animDuration number
----@field animTicker FunctionContainer
+---@field animGroup AnimationGroup
+---@field animDummy Animation
 
 ---@class BarConfig: table
 ---@field barDimMax number
@@ -43,6 +44,7 @@
 ---@field ehLeft Texture
 ---@field ehTop Texture
 ---@field ehBottom Texture
+---@field animFrame Frame
 
 ---@class Edge: table
 ---@field middle boolean
